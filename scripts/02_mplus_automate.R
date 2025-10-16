@@ -19,14 +19,6 @@ w1_30d2 <- read_rds("./data/w1_30d2.rds")
 data_full <- read_rds("./data/data_full.rds")
 
 
-
-
-
-
-
-
-
-
 # export data -------------------------------------------------------------
 
 
@@ -101,4 +93,10 @@ createModels("./mplus/auto/m1_template_cont.txt")
 createModels("./mplus/auto/m1_template_time.txt")
 createModels("./mplus/auto/m1_template_cont_time.txt")
 # make template for model 2
+
+
+# Run models ------------------------------------------
+runModels("./mplus/auto/", logFile = NULL)
+
+
 
