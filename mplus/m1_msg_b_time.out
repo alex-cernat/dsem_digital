@@ -1,0 +1,127 @@
+Mplus VERSION 8.11
+MUTHEN & MUTHEN
+10/15/2025   9:11 AM
+
+INPUT INSTRUCTIONS
+
+  TITLE: this is an example of a two-level time series analysis with a first-
+  order autoregressive AR(1) factor analysis model for a single
+  continuous indicator and measurement error;
+
+  DATA: FILE = "w1_30d2.dat";
+
+  VARIABLE:
+  NAMES = new_id date call_c msg_c phot_c call_d msg_d phot_d web_c web_d sm_c sm_d
+       w1_date w1b_date w1_date_7 w1_date_30 w1b_date_7 w1b_date_30 day_before_w1
+       day_before_w1b w1_7d_window w1b_7d_window w1_30d_window w1b_30d_window days_c
+       call_d_l msg_d_l phot_d_l web_d_l sm_d_l call_c_l msg_c_l phot_c_l web_c_l
+       sm_c_l days_c_l call_d_l2 msg_d_l2 phot_d_l2 web_d_l2 sm_d_l2 call_c_l2
+       msg_c_l2 phot_c_l2 web_c_l2 sm_c_l2 call_c_b msg_c_b phot_c_b web_c_b sm_c_b
+       time;
+  MISSING=.;
+  USEVAR  = msg_c_b day_before_w1;
+  CATEGORICAL = msg_c_b;
+  CLUSTER  = new_id;
+  TINTERVAL = time (1 time2);
+
+
+  ANALYSIS:
+  TYPE = TWOLEVEL RANDOM;
+  ESTIMATOR = BAYES;
+  PROCESSORS = 7;
+  BITERATIONS = (1000);
+  THIN = 10;
+  ALGORITHM=GIBBS(RW);
+
+
+  MODEL:
+  %WITHIN%
+  f BY msg_c_b@1(&1);
+  t | msg_c_b ON day_before_w1;
+  s | f ON f&1;
+
+
+  %BETWEEN%
+  msg_c_b WITH s;
+  s WITH t;
+
+
+
+
+
+  OUTPUT: TECH1 TECH8 TECH4 STDYX residual;
+
+  PLOT: TYPE = PLOT3;
+
+
+
+*** WARNING in VARIABLE command
+  Note that only the first 8 characters of variable names are used in the output.
+  Shorten variable names to avoid any confusion.
+*** WARNING in MODEL command
+  A y-variable has been declared on the within level but not referred to on
+  the between level.  Please check that this is what is intended.  If this is not intended,
+  specify the variable as a within variable.  Problem with:  DAY_BEFORE_W1
+*** WARNING in PLOT command
+  Note that only the first 8 characters of variable names are used in plots.
+  If variable names are not unique within the first 8 characters, problems
+  may occur.
+*** WARNING
+  Data set contains cases with missing on x-variables converted to dependent variables.
+  The autocorrelation of these variables should be included in the model and the variables
+  added to the LAGGED option.  The following converted x-variable(s) have cases with missing:
+
+      DAY_BEFORE_W1 (10803 cases with missing data)
+
+*** WARNING
+  One or more individual-level variables have no variation within a
+  cluster for the following clusters.
+
+     Variable   Cluster IDs with no within-cluster variation
+
+      MSG_C_B     415 514 794 1281 2062 750 490 501 1295 1511 1796 118 1060 797 98 1106 679 146
+                  1781 565 2218 310 1874 671 1187 2217 1055 1830 388 1097 833 862 303 27 261 1116
+                  245 1325 2155 407 412 568 1974 996 1038 463 1540 2012 485 1146 1767 1815 1198
+                  519 693 1327 1886 445 1980 769 1177 2021 1735 835 2166 383 226 181 247 1056
+                  1058 1361 670 1978 218 1677 1143 1164 783 869 988 521 1575 663 1211 1842 2120
+                  2139 762 768 1101 982 319 104 1278 341 619 1909 1084 1888 420 1676 424 267 1732
+                  1043 760 1152 1826 1865 2192 1877 457 386 928 1780 442 358 421 584 598 1049
+                  1337 922 365 297 1448 1507 1141 454 1901 1092 371 1709 1180 1998 1099 704 664
+                  121 392 967 1270 792 636 1594 2194 1317 1029 808 818 537 380 566 891 1876 133
+                  742 1544 957 592 1587 978 338 2106 227 2123 2129 237 2140 774 1691 655 803 204
+                  205 416 417 1098 91 1103 422 423 211 429 432 433 437 220 1210 453 455 229 235
+                  1290 241 138 249 250 252 143 1368 49 269 148 1527 1536 274 276 1559 1565 282
+                  283 287 290 291 1615 294 157 298 160 314 316 165 320 322 323 325 1797 1808 326
+                  331 167 109 1868 340 342 347 1938 177 360 370 372 2085 115 981 193 398 1018
+                  400 405 2211 197 814 815 821 823 481 482 831 845 859 488 864 866 9 871 876 889
+                  57 59 898 899 901 498 908 926 929 930 502 932 933 937 941 946 956 507 958 959
+                  963 964 968 970 63 977 979 983 987 989 992 993 65 997 999 1002 1003 1004 1008
+                  1010 1015 1019 1023 1024 67 1028 525 1030 1031 1032 1033 1034 1035 1050 1054
+                  1061 1062 1070 1075 552 553 1086 1088 77 555 558 559 562 1113 1115 564 1118
+                  1131 1137 82 579 1151 582 1154 87 1160 1161 1163 1167 1172 1175 593 1185 1191
+                  1196 1199 1201 1203 601 603 1214 1218 1220 1232 1233 1237 1243 1246 1250 609
+                  1256 1259 1266 10 1272 615 1283 622 630 1309 95 1323 632 1326 633 11 1345 1346
+                  1352 1353 1360 1365 642 1371 1372 643 1378 1379 1381 1386 1387 1389 1392 1395
+                  1397 1400 1401 1406 1418 1421 1422 1423 1424 1429 644 1431 1432 1437 1442 1445
+                  645 1454 1460 1462 1466 1470 1473 1477 1480 1487 1488 1491 1493 1501 1504 1512
+                  1513 1514 1517 12 1525 1528 1534 1538 13 674 1558 675 1560 1564 1572 20 1579
+                  1581 1584 1586 682 1589 684 685 1600 1614 691 1619 692 21 1639 1644 1645 1646
+                  1661 1669 1674 703 1678 1680 1686 1687 1692 1695 1696 1697 1701 1703 1704 1707
+                  709 1710 1713 710 1731 1751 1754 1757 1759 1760 1763 720 1774 722 723 1785 1789
+                  1791 1793 1799 1803 1809 1812 1813 1814 1819 1821 1823 1828 1831 1833 1845 1850
+                  741 1856 1859 1861 1864 744 746 747 1882 749 1887 32 751 1895 1896 33 1902 755
+                  1914 1916 1919 1923 1926 1935 1937 1939 1940 1943 1946 1947 1953 1961 758 1964
+                  1972 36 1977 764 1981 1985 1986 1987 1991 1992 767 2010 38 2013 2018 2020 39
+                  2030 2036 2038 40 2044 2051 2052 2059 2061 780 2063 2064 2068 2070 782 2091
+                  2093 2095 2097 2098 2111 2114 2117 45 2121 2122 789 2126 2136 2137 793 46 470
+                  2151 800 2161 2163 801 2169 2174 2179 802 2185 2187 2191 2195 2196 2197 2202
+                  2203 2206 807 2208 2212 2213 810 2219 813
+
+   5 WARNING(S) FOUND IN THE INPUT INSTRUCTIONS
+
+
+
+this is an example of a two-level time series analysis with a first-
+order autoregressive AR(1) factor analysis model for a single
+continuous indicator and measurement error;
+

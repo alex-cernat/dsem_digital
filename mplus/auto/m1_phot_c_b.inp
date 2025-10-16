@@ -1,0 +1,39 @@
+
+TITLE: Two-level AR(1) model for phot_c_b;
+
+DATA:
+  FILE = "data_full.dat";
+
+VARIABLE:
+NAMES = new_id age female edu edu_low edu_med edu_high nr_dev w1_inet w1_sp w1_pc_nr
+     w1_sph_nr w1_tabl_nr date call_c msg_c phot_c call_d msg_d phot_d web_c web_d
+     sm_c sm_d w1_date w1b_date w1_date_7 w1_date_30 w1b_date_7 w1b_date_30
+     day_before_w1 day_before_w1b w1_7d_window w1b_7d_window w1_30d_window
+     w1b_30d_window days_c call_d_l msg_d_l phot_d_l web_d_l sm_d_l call_c_l msg_c_l
+     phot_c_l web_c_l sm_c_l days_c_l call_d_l2 msg_d_l2 phot_d_l2 web_d_l2 sm_d_l2
+     call_c_l2 msg_c_l2 phot_c_l2 web_c_l2 sm_c_l2 call_c_b msg_c_b phot_c_b web_c_b
+     sm_c_b time; 
+  USEVARIABLES = phot_c_b;
+  CATEGORICAL = phot_c_b;
+  CLUSTER = new_id;
+  TINTERVAL = time (1 time2);
+
+ANALYSIS:
+  TYPE = TWOLEVEL RANDOM;
+  ESTIMATOR = BAYES;
+  PROCESSORS = 7;
+  BITERATIONS = 20000 (5000);
+  THIN = 10;
+
+MODEL:
+  %WITHIN%
+    f BY phot_c_b@1(&1);
+    stab | f ON f&1;
+
+  %BETWEEN%
+    phot_c_b WITH stab;
+
+
+OUTPUT: TECH1 TECH8 TECH4 STDYX residual;
+
+PLOT: TYPE = PLOT3;
