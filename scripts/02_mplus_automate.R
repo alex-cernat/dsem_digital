@@ -104,4 +104,36 @@ runModels("./mplus/auto/",
           logFile = "./mplus/auto/log.txt")
 
 
+# Explore data with few used cases ------------------------------------------
 
+data_full %>% 
+  filter(!new_id %in% miss_cases[["msg_d_l2"]]) %>% 
+  select(new_id, time, day_before_w1, msg_d_l2) %>% 
+  na.omit() %>% 
+  print(n = 200)
+
+
+# graph with individual and average trends
+data_full %>% 
+  filter(!new_id %in% miss_cases[["msg_d_l2"]]) %>% 
+  select(new_id, time, day_before_w1, msg_d_l2) %>% 
+  na.omit() %>%
+  ggplot(aes(x = time, y = msg_d_l2, group = new_id)) +
+  geom_line(alpha = 0.2) +
+  geom_smooth(aes(group = 1), linewidth = 1.5) +
+  labs(title = "Trends of msg_d_l2 over time",
+       x = "Time",
+       y = "msg_d_l2") 
+
+
+
+data_full %>% 
+  filter(!new_id %in% miss_cases[["sms_c_l2"]]) %>% 
+  select(new_id, time, day_before_w1, msg_d_l2) %>% 
+  na.omit() %>%
+  ggplot(aes(x = time, y = msg_d_l2, group = new_id)) +
+  geom_line(alpha = 0.2) +
+  geom_smooth(aes(group = 1), linewidth = 1.5) +
+  labs(title = "Trends of sms_c_l2 over time",
+       x = "Time",
+       y = "msg_d_l2") 
