@@ -1,0 +1,110 @@
+Mplus VERSION 8.11 (Linux)
+MUTHEN & MUTHEN
+10/18/2025   4:14 PM
+
+INPUT INSTRUCTIONS
+
+  TITLE: Your title goes here
+  DATA:
+    FILE = "mplus/auto/data_full.dat";
+  VARIABLE:
+  NAMES = new_id age female edu edu_low edu_med edu_high nr_dev w1_inet w1_sp w1_pc_nr
+       w1_sph_nr w1_tabl_nr date call_c msg_c phot_c call_d msg_d phot_d web_c web_d
+       sm_c sm_d w1_date w1b_date w1_date_7 w1_date_30 w1b_date_7 w1b_date_30
+       day_before_w1 day_before_w1b w1_7d_window w1b_7d_window w1_30d_window
+       w1b_30d_window days_c call_d_l msg_d_l phot_d_l web_d_l sm_d_l call_c_l msg_c_l
+       phot_c_l web_c_l sm_c_l days_c_l call_d_l2 msg_d_l2 phot_d_l2 web_d_l2 sm_d_l2
+       call_c_l2 msg_c_l2 phot_c_l2 web_c_l2 sm_c_l2 call_c_b msg_c_b phot_c_b web_c_b
+       sm_c_b time;
+  MISSING=.;
+
+*** WARNING in VARIABLE command
+  Note that only the first 8 characters of variable names are used in the output.
+  Shorten variable names to avoid any confusion.
+*** WARNING in MODEL command
+  All variables are uncorrelated with all other variables in the model.
+  Check that this is what is intended.
+*** ERROR
+  One or more variables have a variance of zero.
+  Check your data and format statement.
+
+    Continuous    Number of
+     Variable   Observations    Variance
+
+      NEW_ID       25303      423495.186
+      AGE          21953         187.038
+      FEMALE       21873           0.250
+      EDU          25303           0.496
+      EDU_LOW      25303           0.124
+      EDU_MED      25303           0.243
+      EDU_HIGH     25303           0.246
+      NR_DEV       25303           0.374
+      W1_INET      20355          10.621
+      W1_SP        21572          12.477
+      W1_PC_NR     25303           0.096
+      W1_SPH_N     25303           0.023
+      W1_TABL_     25303           0.245
+      DATE         25303          77.579
+      CALL_C       25303          26.098
+      MSG_C        25303         255.014
+      PHOT_C       25303          20.450
+      CALL_D       25303          28.052
+      MSG_D        25303         330.474
+      PHOT_D       25303           8.905
+      WEB_C        25303        6134.061
+      WEB_D        25303        1504.749
+      SM_C         25303         339.506
+      SM_D         25303        1663.213
+      W1_DATE      25303           4.943
+      W1B_DATE     21769           1.294
+      W1_DATE_     25303           4.943
+      W1_DATE_     25303           4.943
+      W1B_DATE     21769           1.294
+      W1B_DATE     21769           1.294
+      DAY_BEFO     25303          72.144
+      DAY_BEFO     21769          77.661
+      W1_7D_WI     25303           0.168
+      W1B_7D_W     25303           0.025
+    **W1_30D_W     25303           0.000
+      W1B_30D_     25303           0.229
+      DAYS_C       25303          44.948
+      CALL_D_L     25303           0.424
+      MSG_D_L      25303           0.873
+      PHOT_D_L     25303           0.263
+      WEB_D_L      25303           2.401
+      SM_D_L       25303           3.170
+      CALL_C_L     25303           0.677
+      MSG_C_L      25303           0.859
+      PHOT_C_L     25303           0.504
+      WEB_C_L      25303           2.895
+      SM_C_L       25303           1.900
+      DAYS_C_L     25303           0.166
+      CALL_D_L      7591           3.307
+      MSG_D_L2      6591           4.117
+      PHOT_D_L      6237           2.388
+      WEB_D_L2     16403           3.009
+      SM_D_L2      14300           3.202
+      CALL_C_L      7591           0.917
+      MSG_C_L2      6591           1.657
+      PHOT_C_L      6237           0.911
+      WEB_C_L2     16403           2.289
+      SM_C_L2      14300           1.536
+      CALL_C_B     25303           0.210
+      MSG_C_B      25303           0.193
+      PHOT_C_B     25303           0.186
+      WEB_C_B      25303           0.228
+      SM_C_B       25303           0.246
+      TIME         25303          72.144
+
+
+
+MUTHEN & MUTHEN
+3463 Stoner Ave.
+Los Angeles, CA  90066
+
+Tel: (310) 391-9971
+Fax: (310) 391-8971
+Web: www.StatModel.com
+Support: Support@StatModel.com
+
+Copyright (c) 1998-2024 Muthen & Muthen

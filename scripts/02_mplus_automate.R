@@ -13,6 +13,10 @@
 library(tidyverse)
 library(MplusAutomation)
 
+# get number of processors
+availableCores()
+
+
 # import data
 
 w1_30d2 <- read_rds("./data/w1_30d2.rds")
@@ -96,7 +100,8 @@ createModels("./mplus/auto/m1_template_cont_time.txt")
 
 
 # Run models ------------------------------------------
-runModels("./mplus/auto/", logFile = NULL)
+runModels("./mplus/auto/", 
+          logFile = "./mplus/auto/log.txt")
 
 
 

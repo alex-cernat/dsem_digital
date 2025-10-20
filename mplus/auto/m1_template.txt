@@ -32,8 +32,8 @@ NAMES = new_id age female edu edu_low edu_med edu_high nr_dev w1_inet w1_sp w1_p
 ANALYSIS:
   TYPE = TWOLEVEL RANDOM;
   ESTIMATOR = BAYES;
-  PROCESSORS = 7;
-  BITERATIONS = 20000 (5000);
+  PROCESSORS = 30;
+  BITERATIONS = 70000 (5000);
   THIN = 10;
 
 MODEL:

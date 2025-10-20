@@ -1,0 +1,810 @@
+Mplus VERSION 8.11 (Linux)
+MUTHEN & MUTHEN
+10/17/2025   9:36 PM
+
+INPUT INSTRUCTIONS
+
+
+  TITLE: Two-level AR(1) model for phot_c_l2;
+
+  DATA:
+    FILE = "data_full_phot_c_l2.dat";
+
+  VARIABLE:
+    NAMES = new_id age female edu edu_low edu_med edu_high nr_dev w1_inet w1_sp w1_pc_nr
+       w1_sph_nr w1_tabl_nr date call_c msg_c phot_c call_d msg_d phot_d web_c web_d
+       sm_c sm_d w1_date w1b_date w1_date_7 w1_date_30 w1b_date_7 w1b_date_30
+       day_before_w1 day_before_w1b w1_7d_window w1b_7d_window w1_30d_window
+       w1b_30d_window days_c call_d_l msg_d_l phot_d_l web_d_l sm_d_l call_c_l msg_c_l
+       phot_c_l web_c_l sm_c_l days_c_l call_d_l2 msg_d_l2 phot_d_l2 web_d_l2 sm_d_l2
+       call_c_l2 msg_c_l2 phot_c_l2 web_c_l2 sm_c_l2 call_c_b msg_c_b phot_c_b web_c_b
+       sm_c_b time;
+    MISSING = .;
+    USEVARIABLES = phot_c_l2;
+    CLUSTER = new_id;
+    TINTERVAL = time (1 time2);
+
+  ANALYSIS:
+    TYPE = TWOLEVEL RANDOM;
+    ESTIMATOR = BAYES;
+    PROCESSORS = 30;
+    BITERATIONS = 20000 (5000);
+    THIN = 10;
+
+  MODEL:
+
+  %WITHIN%
+  f BY phot_c_l2@1(&1);
+  stab | f ON f&1;
+
+  logv | phot_c_l2;
+
+  %BETWEEN%
+  phot_c_l2 WITH stab;
+
+  [logv] (m);
+  logv (s);
+
+  Model Constraint:
+            new(medv meanv 25qv 75qv);		
+            medv = exp(m);
+            meanv = exp(m + s/2);
+    		! 25th and 75th quartiles
+    		! based on normal dist of logv:
+    		25qv = exp(m - sqrt(s)*0.675);
+    		75qv = exp(m + sqrt(s)*0.675);
+
+
+
+
+  OUTPUT: TECH1 TECH8 TECH4 STDYX residual;
+
+  PLOT: TYPE = PLOT3;
+
+
+
+*** WARNING in VARIABLE command
+  Note that only the first 8 characters of variable names are used in the output.
+  Shorten variable names to avoid any confusion.
+*** WARNING in PLOT command
+  Note that only the first 8 characters of variable names are used in plots.
+  If variable names are not unique within the first 8 characters, problems
+  may occur.
+*** WARNING
+  One or more individual-level variables have no variation within a
+  cluster for the following clusters.
+
+     Variable   Cluster IDs with no within-cluster variation
+
+      PHOT_C_L    514 501 1590 762 534 1923 701 1088 1201 993 2095 418 1241 1197 337 2207 1259
+                  188 57 1317 1992 87 1211 743 1805 814 991 1044 1021 722 1302 246 2014 1397 1674
+                  692 1481
+
+*** WARNING
+  Data set contains cases with missing on all variables.
+  These cases were not included in the analysis.
+  Number of cases with missing on all variables:  8710
+   4 WARNING(S) FOUND IN THE INPUT INSTRUCTIONS
+
+
+
+Two-level AR(1) model for phot_c_l2;
+
+SUMMARY OF ANALYSIS
+
+Number of groups                                                 1
+Number of observations                                       16349
+
+Number of dependent variables                                    1
+Number of independent variables                                  0
+Number of continuous latent variables                            4
+
+Observed dependent variables
+
+  Continuous
+   PHOT_C_L2
+
+Continuous latent variables
+   F           F&1         STAB        LOGV
+
+Variables with special functions
+
+  Cluster variable      NEW_ID
+
+Estimator                                                    BAYES
+Specifications for Bayesian Estimation
+  Point estimate                                            MEDIAN
+  Number of Markov chain Monte Carlo (MCMC) chains               2
+  Random seed for the first chain                                0
+  Starting value information                           UNPERTURBED
+  Algorithm used for Markov chain Monte Carlo           GIBBS(PX1)
+  Convergence criterion                                  0.500D-01
+  Maximum number of iterations                               20000
+  K-th iteration used for thinning                              10
+
+Input data file(s)
+  data_full_phot_c_l2.dat
+Input data format  FREE
+
+
+SUMMARY OF DATA
+
+     Number of clusters                        649
+
+       Size (s)    Cluster ID with Size s
+
+          2        750
+          3        514 245 501
+          4        1590
+          5        1874 2217 118
+          6        1159 833 98 762 1540
+          7        1615 1781
+          8        534 565 397
+          9        8 384 1131 573 1923 701 895 441
+         10        463 1088 862 1201 538
+         11        993 620 1446
+         12        386 1200 753 1780 2095 1034 1522 40 2144
+         13        682 2120 557
+         14        418 1870 1811 521 1241 2195 1624
+         15        1849 1926 1546 1197 365 29 1974 1001 1030 903
+         16        1962 1755 337 2052 1353 773 752 558 761 2216
+         17        1678 2207 494 163 959 1283 1785 470 1646 1259 524 203
+                   1840
+         18        900 188 57 880 1160 669 363 1317 898 520 1992
+         19        1580 1402 1656 235 1899 1979 1361 301 274 2139 602 1677
+                   965 115 87 45
+         20        2038 105 189 1666 155 611 1877 1718 1687 931
+         21        1101 67 295 1343 260 1249 999 506 902 452 252 1549 1766
+                   2034 678
+         22        1607 241 1211 435 743 667 446 1053 552 488 1182 1210
+                   186 2039
+         23        1805 814 991 982 153 1190 1808 1810 1967 894 2082 636
+                   12 2121 561 579 1273 316 1049 681 1955
+         24        78 2224 1551 270 420 1710 992 1352 994 423 1760 1323
+                   283 956 525 217 211 1233 1305 1155 886 224 198 1251
+                   1472
+         25        1731 1637 1697 2198 809 370 995 2182 52 1971 368 1591
+                   263 426 205 32 432 633 696 72 1618 2007 1044 515 2043
+                   3 400 413 1111 1335 1626 1122 1086 1599
+         26        1502 674 646 229 108 196 1544 2 1981 1067 593 631 1248
+                   1050 1021 643 644 1237 1998 860 182 941 349 782 946
+                   1412 492 1264 536 1448 1339
+         27        354 18 1879 1586 2181 1644 722 33 399 1788 745 1227
+                   177 876 947 645 1914 2000 332 1709 1002 642 813 1151
+                   695 559 600 253 1096 461 1302 1773 974 1829 1328 111
+                   392 1714 915 2129 1585
+         28        26 837 246 553 1907 590 1878 648 35 486 2056 845 410
+                   2197 1834 537 2001 1669 498 918 541 1778 44 239 97 1350
+                   711 65 1743 1516 822 453 11 499 940 277 212 2211 1485
+                   603 193 1968 187 934 357 550 323 4 966 1818 1809 638
+                   904 858 953 1686 353 592
+         29        1671 361 91 1868 2185 320 1081 1246 307 304 250 1729
+                   1404 1478 220 2069 1091 317 129 147 1468 284 1110 172
+                   1835 85 393 2203 1930 1181 117 1498 405 376 328 309
+                   2223 1588 402 157 73 1627 110 1315 1071 1727 1366 2013
+                   1595 2111 1562 414 1324 1701 287 1847 1869 262 440 396
+                   1075 1648 1850 1147 109 137 1997 132 278 1572 1303 294
+                   1089 1174 62 180 433 447 422 398 1219 1461 1675 1307
+                   1944
+         30        2099 702 910 2157 1814 1924 1340 2165 37 1989 1716 1782
+                   616 1985 1524 540 48 2208 639 1033 1757 79 802 767 2028
+                   1470 508 1613 1460 1326 849 93 870 2026 1035 2160 1203
+                   1154 932 709 1768 859 2184 2136 1214 896 726 1263 2030
+                   1833 821 2037 2065 1928 1946 2036 2076 1415 1937 786
+                   1216 69 1839 1895 1272 1291 1581 2150 720 88 1231 1365
+                   1940 885 1593 1561 740 970 622 1851 1803 1951 1905 1421
+                   1465 889 1790 1077 59 930 1612 1236 1770 1791 1225 2075
+                   987 1660 615 2014 90 1956 1891 1708 1518 2141 665 632
+                   1754 100 2067 1294 1254 1397 772 1276 686 1695 2040
+                   1934 39 46 1466 2024 1828 1117 909 1032 1360 1793 1953
+                   1674 1912 1024 92 1963 1659 2003 692 1661 2035 1745
+                   735 1720 1680 1568 864 1654 1314 906 599 467 892 1298
+                   929 2063 1451 1334 901 2073 1008 1115 1837 1064 2138
+                   1789 1623 829 21 725 1015 640 938 986 1817 1104 630
+                   547 784 1999 1542 1481 1774 1957 675 86 99 1171 944
+                   1964 19 1311 977 1584 2213 2137 1902 1601 2147 1947
+                   2115 13
+
+
+
+COVARIANCE COVERAGE OF DATA
+
+Minimum covariance coverage value   0.100
+
+     Number of missing data patterns             2
+
+
+     PROPORTION OF DATA PRESENT
+
+
+           Covariance Coverage
+              PHOT_C_L
+              ________
+ PHOT_C_L       0.375
+
+
+
+UNIVARIATE SAMPLE STATISTICS
+
+
+     UNIVARIATE HIGHER-ORDER MOMENT DESCRIPTIVE STATISTICS
+
+         Variable/         Mean/     Skewness/   Minimum/ % with                Percentiles
+        Sample Size      Variance    Kurtosis    Maximum  Min/Max      20%/60%    40%/80%    Median
+
+     PHOT_C_L2             1.037       0.751       0.000   31.56%       0.000      0.693      0.693
+            6135.000       0.914       0.090       4.920    0.02%       1.099      1.792
+
+
+     WARNING: PROBLEMS OCCURRED IN SEVERAL ITERATIONS IN THE COMPUTATION OF THE STANDARDIZED ESTIMATES FOR SEVERAL
+     CLUSTERS. THIS IS MOST LIKELY DUE TO AR COEFFICIENTS GREATER THAN 1 OR PARAMETERS GIVING NON-STATIONARY MODELS.
+     SUCH POSTERIOR DRAWS ARE REMOVED. THE FOLLOWING CLUSTERS HAD SUCH PROBLEMS:
+          750 514 245 501 1590 1874 2217 118 1159 833 98 762 1540 1615 1781 534 565 397 8 384 1131 573
+          1923 701 895 441 463 1088 862 1201 538 993 620 1446 386 1200 753 1780 2095 1034 1522 40 2144
+          682 2120 557 418 1870 1811 521 1241 2195 1624 1849 1926 1546 1197 365 29 1974 1001 1030 903
+          1962 1755 337 2052 1353 773 752 558 761 2216 1678 2207 494 163 959 1283 1785 470 1646 1259
+          524 203 1840 900 188 57 880 1160 669 363 1317 898 520 1992 1580 1402 1656 235 1899 1979 1361
+          301 274 602 1677 965 115 87 45 2038 105 189 155 611 1877 1718 1687 1101 295 1343 260 1249 506
+          902 452 1549 1766 2034 678 1607 1211 435 743 667 446 1053 488 1182 1210 186 2039 1805 814 991
+          982 153 1190 1808 1810 1967 894 2082 636 12 2121 1273 316 1049 681 1955 78 2224 270 420 1710
+          992 1352 994 423 1760 283 956 217 211 1233 1305 1155 224 1472 1637 1697 2198 370 995 2182 52
+          1971 368 1591 263 426 32 432 633 696 1618 2007 1044 515 413 1335 1626 1122 1086 1599 1502 674
+          646 229 108 196 1544 2 1981 1067 631 1248 644 1998 860 182 941 349 946 1412 492 1264 1448 1339
+          354 1586 2181 1644 722 399 745 1227 947 645 1914 2000 332 1709 1002 642 813 1151 559 600 253
+          1096 1302 1773 974 1829 1328 111 392 1714 1585 26 837 553 1907 1878 486 845 410 2197 1834 537
+          1669 498 918 44 239 97 1350 711 1743 1516 822 11 940 277 212 2211 1485 603 193 1968 187 934
+          550 4 1818 1809 638 904 858 953 1686 353 592 1671 1868 320 1246 304 250 1404 1478 220 2069
+          1091 147 1468 284 172 85 393 2203 1930 1181 117 1498 405 309 402 73 1627 110 1727 1366 2013
+          1595 2111 1562 414 1324 287 1847 262 396 1075 1648 1850 1147 109 137 278 1572 294 1174 62 180
+          447 398 1219 1461 1675 1307 1944 702 2157 1814 1924 1340 2165 37 1989 1524 540 48 2208 639
+          1033 79 767 2028 1470 508 1460 1326 93 2026 2160 1203 1154 932 709 1768 2184 2136 1214 896
+          726 1263 2030 821 2037 2065 1928 1946 2076 1415 1937 786 1216 1839 1895 1272 2150 88 1231 1365
+          1940 885 1561 740 970 622 1803 1951 1905 1421 1465 1790 1077 59 930 1612 1770 1791 2075 987
+          1660 2014 90 1956 1891 1708 1518 632 100 2067 1294 1254 1397 1276 686 1695 2040 1934 46 1466
+          2024 1828 1117 1360 1793 1953 1674 1912 1024 92 1963 1659 2003 1661 2035 1745 735 1720 1680
+          1654 906 599 467 929 2063 1451 1334 901 2073 1008 1115 1064 2138 21 640 938 986 1817 630 547
+          1999 1542 1481 1774 1957 675 86 99 1171 1964 19 977 2213 2137 1902 1601 2147 1947 2115 13
+
+THE MODEL ESTIMATION TERMINATED NORMALLY
+
+     USE THE FBITERATIONS OPTION TO INCREASE THE NUMBER OF ITERATIONS BY A FACTOR
+     OF AT LEAST TWO TO CHECK CONVERGENCE AND THAT THE PSR VALUE DOES NOT INCREASE.
+
+
+
+MODEL FIT INFORMATION
+
+Number of Free Parameters                               8
+
+Information Criteria
+
+          Deviance (DIC)                         8247.066
+          Estimated Number of Parameters (pD)   -1522.310
+
+
+
+MODEL RESULTS
+
+                                Posterior  One-Tailed         95% C.I.
+                    Estimate       S.D.      P-Value   Lower 2.5%  Upper 2.5%  Significance
+
+Within Level
+
+ F        BY
+    PHOT_C_L2          1.000       0.000      0.000       1.000       1.000
+
+ Residual Variances
+    F                  0.175       0.033      0.000       0.118       0.245      *
+
+Between Level
+
+ PHOT_C_L WITH
+    STAB               0.070       0.010      0.000       0.053       0.092      *
+
+ Means
+    PHOT_C_L2          0.894       0.020      0.000       0.855       0.933      *
+    STAB               0.406       0.061      0.000       0.287       0.511      *
+    LOGV              -0.919       0.089      0.000      -1.115      -0.766      *
+
+ Variances
+    PHOT_C_L2          0.125       0.015      0.000       0.099       0.158      *
+    STAB               0.044       0.010      0.000       0.029       0.067      *
+    LOGV               0.253       0.056      0.000       0.162       0.381      *
+
+New/Additional Parameters
+    MEDV               0.399       0.035      0.000       0.328       0.465      *
+    MEANV              0.453       0.033      0.000       0.388       0.514      *
+    25QV               0.284       0.033      0.000       0.219       0.349      *
+    75QV               0.560       0.039      0.000       0.483       0.631      *
+
+
+STANDARDIZED MODEL RESULTS
+
+
+STDYX Standardization
+
+                                Posterior  One-Tailed         95% C.I.
+                    Estimate       S.D.      P-Value   Lower 2.5%  Upper 2.5%  Significance
+
+Within-Level Standardized Estimates Averaged Over Clusters
+
+ F        BY
+    PHOT_C_L2          0.609       0.038      0.000       0.541       0.678      *
+
+ STAB | F ON
+    F&1                0.403       0.058      0.000       0.284       0.498      *
+
+ LOGV |
+    PHOT_C_L2          0.619       0.047      0.000       0.528       0.697      *
+
+ Residual Variances
+    F                  0.791       0.040      0.000       0.719       0.865      *
+
+Between Level
+
+ PHOT_C_L WITH
+    STAB               0.961       0.053      0.000       0.807       0.999      *
+
+ Means
+    PHOT_C_L2          2.526       0.159      0.000       2.226       2.858      *
+    STAB               1.895       0.449      0.000       1.174       2.897      *
+    LOGV              -1.827       0.154      0.000      -2.171      -1.568      *
+
+ Variances
+    PHOT_C_L2          1.000       0.000      0.000       1.000       1.000
+    STAB               1.000       0.000      0.000       1.000       1.000
+    LOGV               1.000       0.000      0.000       1.000       1.000
+
+
+R-SQUARE
+
+Within-Level R-Square Averaged Across Clusters
+
+                                Posterior  One-Tailed         95% C.I.
+    Variable        Estimate       S.D.      P-Value   Lower 2.5%  Upper 2.5%
+
+    PHOT_C_L2          0.381       0.047      0.000       0.303       0.470
+
+                                Posterior  One-Tailed         95% C.I.
+    Variable        Estimate       S.D.      P-Value   Lower 2.5%  Upper 2.5%
+
+    F                  0.209       0.040      0.000       0.135       0.281
+
+
+RESIDUAL OUTPUT
+
+
+     ESTIMATED MODEL
+
+
+     AVERAGE CLUSTER ESTIMATES
+
+
+           Means
+              PHOT_C_L
+              ________
+                0.894
+
+
+           Covariances
+              PHOT_C_L
+              ________
+ PHOT_C_L       0.759
+
+
+           Correlations
+              PHOT_C_L
+              ________
+ PHOT_C_L       1.000
+
+
+     BETWEEN LEVEL
+
+
+           Means
+              PHOT_C_L
+              ________
+                0.894
+
+
+           Covariances
+              PHOT_C_L
+              ________
+ PHOT_C_L       0.125
+
+
+           Correlations
+              PHOT_C_L
+              ________
+ PHOT_C_L       1.000
+
+
+TECHNICAL 1 OUTPUT
+
+
+     PARAMETER SPECIFICATION FOR WITHIN
+
+
+           NU
+              PHOT_C_L
+              ________
+                    0
+
+
+           LAMBDA
+              F             F&1           PHOT_C_L
+              ________      ________      ________
+ PHOT_C_L           0             0             0
+
+
+           THETA
+              PHOT_C_L
+              ________
+ PHOT_C_L           0
+
+
+           ALPHA
+              F             F&1           PHOT_C_L
+              ________      ________      ________
+                    0             0             0
+
+
+           BETA
+              F             F&1           PHOT_C_L
+              ________      ________      ________
+ F                  0             0             0
+ F&1                0             0             0
+ PHOT_C_L           0             0             0
+
+
+           PSI
+              F             F&1           PHOT_C_L
+              ________      ________      ________
+ F                  1
+ F&1                0             0
+ PHOT_C_L           0             0             0
+
+
+     PARAMETER SPECIFICATION FOR BETWEEN
+
+
+           NU
+              PHOT_C_L
+              ________
+                    0
+
+
+           LAMBDA
+              STAB          LOGV          PHOT_C_L
+              ________      ________      ________
+ PHOT_C_L           0             0             0
+
+
+           THETA
+              PHOT_C_L
+              ________
+ PHOT_C_L           0
+
+
+           ALPHA
+              STAB          LOGV          PHOT_C_L
+              ________      ________      ________
+                    2             3             4
+
+
+           BETA
+              STAB          LOGV          PHOT_C_L
+              ________      ________      ________
+ STAB               0             0             0
+ LOGV               0             0             0
+ PHOT_C_L           0             0             0
+
+
+           PSI
+              STAB          LOGV          PHOT_C_L
+              ________      ________      ________
+ STAB               5
+ LOGV               0             6
+ PHOT_C_L           7             0             8
+
+
+     PARAMETER SPECIFICATION FOR THE ADDITIONAL PARAMETERS
+
+
+           NEW/ADDITIONAL PARAMETERS
+              MEDV          MEANV         25QV          75QV
+              ________      ________      ________      ________
+                    9            10            11            12
+
+
+     STARTING VALUES FOR WITHIN
+
+
+           NU
+              PHOT_C_L
+              ________
+                0.000
+
+
+           LAMBDA
+              F             F&1           PHOT_C_L
+              ________      ________      ________
+ PHOT_C_L       0.000         0.000         1.000
+
+
+           THETA
+              PHOT_C_L
+              ________
+ PHOT_C_L       0.000
+
+
+           ALPHA
+              F             F&1           PHOT_C_L
+              ________      ________      ________
+                0.000         0.000         0.000
+
+
+           BETA
+              F             F&1           PHOT_C_L
+              ________      ________      ________
+ F              0.000         0.000         0.000
+ F&1            0.000         0.000         0.000
+ PHOT_C_L       1.000         0.000         0.000
+
+
+           PSI
+              F             F&1           PHOT_C_L
+              ________      ________      ________
+ F              1.000
+ F&1            0.000         1.000
+ PHOT_C_L       0.000         0.000         0.000
+
+
+     STARTING VALUES FOR BETWEEN
+
+
+           NU
+              PHOT_C_L
+              ________
+                0.000
+
+
+           LAMBDA
+              STAB          LOGV          PHOT_C_L
+              ________      ________      ________
+ PHOT_C_L       0.000         0.000         1.000
+
+
+           THETA
+              PHOT_C_L
+              ________
+ PHOT_C_L       0.000
+
+
+           ALPHA
+              STAB          LOGV          PHOT_C_L
+              ________      ________      ________
+                0.000         0.000         1.037
+
+
+           BETA
+              STAB          LOGV          PHOT_C_L
+              ________      ________      ________
+ STAB           0.000         0.000         0.000
+ LOGV           0.000         0.000         0.000
+ PHOT_C_L       0.000         0.000         0.000
+
+
+           PSI
+              STAB          LOGV          PHOT_C_L
+              ________      ________      ________
+ STAB           1.000
+ LOGV           0.000         1.000
+ PHOT_C_L       0.000         0.000         0.457
+
+
+     STARTING VALUES FOR THE ADDITIONAL PARAMETERS
+
+
+           NEW/ADDITIONAL PARAMETERS
+              MEDV          MEANV         25QV          75QV
+              ________      ________      ________      ________
+                0.500         0.500         0.500         0.500
+
+
+
+     PRIORS FOR ALL PARAMETERS            PRIOR MEAN      PRIOR VARIANCE     PRIOR STD. DEV.
+
+     Parameter 1~IG(-1.000,0.000)          infinity            infinity            infinity
+     Parameter 2~N(0.000,infinity)           0.0000            infinity            infinity
+     Parameter 3~N(0.000,infinity)           0.0000            infinity            infinity
+     Parameter 4~N(0.000,infinity)           0.0000            infinity            infinity
+     Parameter 5~IW(0.000,-3)              infinity            infinity            infinity
+     Parameter 6~IG(-1.000,0.000)          infinity            infinity            infinity
+     Parameter 7~IW(0.000,-3)              infinity            infinity            infinity
+     Parameter 8~IW(0.000,-3)              infinity            infinity            infinity
+
+
+TECHNICAL 4 OUTPUT
+
+
+     AVERAGE ESTIMATES DERIVED FROM THE MODEL FOR WITHIN
+
+
+           ESTIMATED MEANS FOR THE LATENT VARIABLES
+              F             F&1           STAB          LOGV          PHOT_C_L
+              ________      ________      ________      ________      ________
+                0.000         0.000         0.395        -0.919         0.894
+
+
+           ESTIMATED COVARIANCE MATRIX FOR THE LATENT VARIABLES
+              F             F&1           STAB          LOGV          PHOT_C_L
+              ________      ________      ________      ________      ________
+ F              0.306
+ F&1            0.175         0.306
+ STAB           0.000         0.000         0.000
+ LOGV           0.000         0.000         0.000         0.000
+ PHOT_C_L       0.306         0.175         0.000         0.000         0.759
+
+
+           ESTIMATED CORRELATION MATRIX FOR THE LATENT VARIABLES
+              F             F&1           STAB          LOGV          PHOT_C_L
+              ________      ________      ________      ________      ________
+ F              1.000
+ F&1            0.448         1.000
+ STAB           0.000         0.000         1.000
+ LOGV           0.000         0.000         0.000         1.000
+ PHOT_C_L       0.603         0.275         0.000         0.000         1.000
+
+
+     ESTIMATES DERIVED FROM THE MODEL FOR BETWEEN
+
+
+           ESTIMATED MEANS FOR THE LATENT VARIABLES
+              F             F&1           STAB          LOGV          PHOT_C_L
+              ________      ________      ________      ________      ________
+                0.000         0.000         0.406        -0.919         0.894
+
+
+           ESTIMATED COVARIANCE MATRIX FOR THE LATENT VARIABLES
+              F             F&1           STAB          LOGV          PHOT_C_L
+              ________      ________      ________      ________      ________
+ F              0.000
+ F&1            0.000         0.000
+ STAB           0.000         0.000         0.044
+ LOGV           0.000         0.000         0.000         0.253
+ PHOT_C_L       0.000         0.000         0.070         0.000         0.125
+
+
+           ESTIMATED CORRELATION MATRIX FOR THE LATENT VARIABLES
+              F             F&1           STAB          LOGV          PHOT_C_L
+              ________      ________      ________      ________      ________
+ F              1.000
+ F&1            0.000         1.000
+ STAB           0.000         0.000         1.000
+ LOGV           0.000         0.000         0.000         1.000
+ PHOT_C_L       0.000         0.000         0.946         0.000         1.000
+
+
+TECHNICAL 8 OUTPUT
+
+
+   TECHNICAL 8 OUTPUT FOR BAYES ESTIMATION
+
+     PROCESSOR    BSEED
+     1            0
+     2            285380
+     3            253358
+     4            93468
+     5            608496
+     6            903420
+     7            195873
+     8            462953
+     9            939021
+     10           127215
+     11           415931
+     12           533738
+     13           107446
+     14           399671
+     15           650371
+     16           27071
+     17           76974
+     18           68985
+     19           851945
+     20           637345
+     21           573096
+     22           902278
+     23           887676
+     24           372176
+     25           347515
+     26           207896
+     27           569131
+     28           364676
+     29           392418
+     30           366706
+
+                     POTENTIAL       PARAMETER WITH
+     ITERATION    SCALE REDUCTION      HIGHEST PSR
+     100              2.432               2
+     200              3.031               1
+     300              1.828               2
+     400              1.184               5
+     500              1.112               3
+     600              1.125               3
+     700              1.045               8
+     800              1.161               2
+     900              1.020               6
+     1000             1.066               7
+     1100             1.207               7
+     1200             1.246               7
+     1300             1.220               2
+     1400             1.222               2
+     1500             1.287               2
+     1600             1.286               2
+     1700             1.243               2
+     1800             1.296               2
+     1900             1.347               2
+     2000             1.397               2
+     2100             1.301               2
+     2200             1.156               2
+     2300             1.067               2
+     2400             1.030               2
+     2500             1.028               6
+     2600             1.016               7
+     2700             1.011               7
+     2800             1.014               1
+     2900             1.019               1
+     3000             1.017               1
+     3100             1.011               7
+     3200             1.008               3
+     3300             1.008               3
+     3400             1.008               3
+     3500             1.024               3
+     3600             1.030               3
+     3700             1.039               3
+     3800             1.033               3
+     3900             1.027               3
+     4000             1.026               3
+     4100             1.024               3
+     4200             1.014               3
+     4300             1.011               8
+     4400             1.010               8
+     4500             1.009               3
+     4600             1.008               3
+     4700             1.008               2
+     4800             1.011               2
+     4900             1.011               2
+     5000             1.006               8
+
+
+PLOT INFORMATION
+
+The following plots are available:
+
+  Histograms (sample values)
+  Scatterplots (sample values)
+  Between-level histograms (sample values, sample means/variances)
+  Between-level scatterplots (sample values, sample means/variances)
+  Time series plots (sample values, ACF, PACF)
+  Histogram of subjects per time point
+  Time interval plots
+  Bayesian posterior parameter distributions
+  Bayesian posterior parameter trace plots
+  Bayesian autocorrelation plots
+
+     Beginning Time:  21:36:40
+        Ending Time:  22:18:34
+       Elapsed Time:  00:41:54
+
+
+
+MUTHEN & MUTHEN
+3463 Stoner Ave.
+Los Angeles, CA  90066
+
+Tel: (310) 391-9971
+Fax: (310) 391-8971
+Web: www.StatModel.com
+Support: Support@StatModel.com
+
+Copyright (c) 1998-2024 Muthen & Muthen

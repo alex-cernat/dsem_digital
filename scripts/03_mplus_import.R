@@ -14,21 +14,44 @@ library(MplusAutomation)
 # import data
 
 w1_30d2 <- read_rds("./data/w1_30d2.rds")
-
+data_full <- read_rds("./data/data_full.rds")
 
 
 
 # Import Mplus outputs -----------------
 
 
-outs_m1 <- list.files("./mplus/", full.names = TRUE, pattern = "out") %>% 
-  str_subset("m1") %>% 
+path <- list.files("./mplus/auto/", 
+                      full.names = TRUE, 
+                      pattern = "out") %>% 
+  str_subset("m1") 
+
+out_m1 <- path %>% 
   map(MplusAutomation::readModels) 
 
-pth_temp <- list.files("./mplus/", full.names = TRUE, pattern = "out") %>% 
-  str_subset("time") %>% 
-  readModels()
-  
+
+
+issues <- tibble(
+  path = path,
+  conv_issue = map_lgl(out_m1, function(x) x$tech8$psr%>% 
+                         slice_tail(n = 1) %>% 
+                         .[["psr"]] > 1.099
+  )
+)
+
+
+count(issues, conv_issue)
+
+issues %>% 
+  filter(conv_issue) %>% 
+  pull(path)
+
+issues %>% 
+  filter(conv_issue) %>% 
+  pull(path) %>% 
+  map(MplusAutomation::runModels, logFile = "./mplus/auto/log_retry.txt")
+
+
 
 extract_r2 <- function(x) {
   nr_ids <- x$data_summary$overall$NClusters
