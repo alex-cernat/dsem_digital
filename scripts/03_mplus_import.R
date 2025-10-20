@@ -46,10 +46,10 @@ issues %>%
   filter(conv_issue) %>% 
   pull(path)
 
-issues %>% 
-  filter(conv_issue) %>% 
-  pull(path) %>% 
-  map(MplusAutomation::runModels, logFile = "./mplus/auto/log_retry.txt")
+# issues %>% 
+#   filter(conv_issue) %>% 
+#   pull(path) %>% 
+#   map(MplusAutomation::runModels, logFile = "./mplus/auto/log_retry.txt")
 
 
 
