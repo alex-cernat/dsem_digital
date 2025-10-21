@@ -115,9 +115,9 @@ trend_effects %>%
 res_m1 <- out_m1[!issues$conv_issue] %>% 
   map_dfr(extract_r2)
 
-res_m1 %>% 
-  filter(time_cntrl == T) %>% 
-  arrange(ids_used)
+# res_m1 %>% 
+#   filter(time_cntrl == T) %>% 
+#   arrange(ids_used)
 
 
 res_m1 <- res_m1 %>% 
@@ -150,7 +150,7 @@ res_m1 %>%
   geom_point(position = position_dodge(width = 0.5), size = 3) +
   geom_errorbar(aes(ymin = lower_2.5ci, ymax = upper_2.5ci), 
                 position = position_dodge(width = 0.5), width = 0) +
-  labs(x = "Variable", y = "Estimated reliability", color = "Method") +
+  labs(x = "Variable", y = "Estimated reliability", color = "Time control") +
   facet_wrap(~method) +
   theme_bw() +
   theme(text = element_text(size = 16)) +

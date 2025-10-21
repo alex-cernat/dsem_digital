@@ -96,7 +96,7 @@ createModels("./mplus/auto/m1_template.txt")
 createModels("./mplus/auto/m1_template_cont.txt")
 createModels("./mplus/auto/m1_template_time.txt")
 createModels("./mplus/auto/m1_template_cont_time.txt")
-# make template for model 2
+createModels("./mplus/auto/m2_template_cont_time.txt")
 
 
 # Run models ------------------------------------------
