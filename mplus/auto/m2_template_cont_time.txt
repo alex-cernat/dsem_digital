@@ -1,19 +1,20 @@
 [[init]]
 iterators = var;
-var = 1:5;
+var = 1:10;
 
 # Variable names for substitution
-varNames#var = call_c_b msg_c_b phot_c_b web_c_b sm_c_b;
+varNames#var = call_d_l2 msg_d_l2 phot_d_l2 web_d_l2 sm_d_l2 call_c_l2 msg_c_l2
+		phot_c_l2 web_c_l2 sm_c_l2;
 
 # Output directory and filenames
 outputDirectory = "mplus/auto/";
-filename = "m1_[[varNames#var]].inp";
+filename = "m2_[[varNames#var]]_time.inp";
 [[/init]]
 
 TITLE: Two-level AR(1) model for [[varNames#var]];
 
 DATA:
-  FILE = "data_full.dat";
+  FILE = "data_full_[[varNames#var]].dat";
 
 VARIABLE:
 NAMES = new_id age female edu edu_low edu_med edu_high nr_dev w1_inet w1_sp w1_pc_nr
@@ -24,8 +25,10 @@ NAMES = new_id age female edu edu_low edu_med edu_high nr_dev w1_inet w1_sp w1_p
      phot_c_l web_c_l sm_c_l days_c_l call_d_l2 msg_d_l2 phot_d_l2 web_d_l2 sm_d_l2
      call_c_l2 msg_c_l2 phot_c_l2 web_c_l2 sm_c_l2 call_c_b msg_c_b phot_c_b web_c_b
      sm_c_b time; 
-  USEVARIABLES = [[varNames#var]];
-  CATEGORICAL = [[varNames#var]];
+  MISSING = .;
+  USEVARIABLES = [[varNames#var]] day_before_w1 female age edu_med edu_high nr_dev w1_inet;
+  WITHIN = day_before_w1;
+  BETWEEN = female age edu_med edu_high nr_dev;
   CLUSTER = new_id;
   TINTERVAL = time (1 time2);
 
@@ -37,12 +40,41 @@ ANALYSIS:
   THIN = 20;
 
 MODEL:
-  %WITHIN%
-    f BY [[varNames#var]]@1(&1);
-    stab | f ON f&1;
 
-  %BETWEEN%
-    [[varNames#var]] WITH stab;
+%WITHIN%
+f BY [[varNames#var]]@1(&1);
+trend | [[varNames#var]] ON day_before_w1;
+stab | f ON f&1;
+
+logv | [[varNames#var]];
+
+day_before_w1;
+
+%BETWEEN%
+[[varNames#var]] WITH stab trend;
+stab WITH trend;
+
+[logv] (m);
+logv (s);
+
+logv ON female age edu_med edu_high nr_dev;
+
+female;
+age;
+edu_med;
+edu_high;
+nr_dev;
+
+Model Constraint:
+          new(medv meanv 25qv 75qv);		
+          medv = exp(m);
+          meanv = exp(m + s/2);
+  		! 25th and 75th quartiles
+  		! based on normal dist of logv:
+  		25qv = exp(m - sqrt(s)*0.675);
+  		75qv = exp(m + sqrt(s)*0.675);
+
+
 
 
 OUTPUT: TECH1 TECH8 TECH4 STDYX residual;
