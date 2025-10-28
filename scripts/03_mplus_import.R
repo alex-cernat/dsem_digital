@@ -46,10 +46,10 @@ issues %>%
   filter(conv_issue) %>% 
   pull(path)
 
-issues %>% 
-  filter(conv_issue) %>% 
-  pull(path) %>% 
-  map(MplusAutomation::runModels, logFile = "./mplus/auto/log_retry.txt")
+# issues %>% 
+#   filter(conv_issue) %>% 
+#   pull(path) %>% 
+#   map(MplusAutomation::runModels, logFile = "./mplus/auto/log_retry.txt")
 
 
 
@@ -82,17 +82,51 @@ extract_r2 <- function(x) {
   
 }
 
+x <- out_m1[str_detect(issues$path, "time")][[10]]
+
+
+extract_trend <- function(x) {
+  df <- x$parameters$stdyx.standardized %>%
+    filter(
+      param == "DAY_BEFORE" & str_detect(paramHeader, "ON")
+    ) %>%
+    select(-posterior_sd, -sig, -BetweenWithin, -param)
+  
+  df$param <- x$parameters$unstandardized$param[1]
+  
+  df %>% 
+    mutate_all(~str_to_lower(.))
+}
 
 
 
-res_m1 <- map_dfr(outs_m1, extract_r2)
+
+trend_effects <- out_m1[issues$conv_issue == FALSE &
+                          str_detect(issues$path, "time")] %>% 
+  map_dfr(extract_trend)
+
+# any trends are significant?
+trend_effects %>% 
+  filter(pval < 0.05)
+
+
+
+# extract reliabilities ----------------------------
+res_m1 <- out_m1[!issues$conv_issue] %>% 
+  map_dfr(extract_r2)
+
+# res_m1 %>% 
+#   filter(time_cntrl == T) %>% 
+#   arrange(ids_used)
+
 
 res_m1 <- res_m1 %>% 
   separate(param, into = c("var", "method1", "method2"), sep = "_") %>% 
   mutate(method = case_when(method1 == "d" ~ "Log Duration",
                              method1 == "c" & method2 == "l2" ~ "Log count",
                              TRUE ~ "Dummy"),
-         ids_used = nr_ids - ids_issues) %>% 
+         ids_used = nr_ids - ids_issues,
+         time_cntrl = str_detect(issues$path[!issues$conv_issue], "time")) %>% 
   select(var, method, everything(), -method1, -method2)
 
   
@@ -101,7 +135,7 @@ res_m1  %>%
 
 ## get average reliabilities
 res_m1 %>% 
-  group_by(var) %>% 
+  group_by(var, time_cntrl) %>% 
   summarise(rel = mean(est))
 
 res_m1 %>% 
@@ -112,13 +146,23 @@ res_m1 %>%
 
 # make graph with confidence interval
 res_m1 %>% 
-  ggplot(aes(x = var, y = est, color = method)) +
+  ggplot(aes(x = var, y = est, color = time_cntrl)) +
   geom_point(position = position_dodge(width = 0.5), size = 3) +
   geom_errorbar(aes(ymin = lower_2.5ci, ymax = upper_2.5ci), 
                 position = position_dodge(width = 0.5), width = 0) +
-  labs(x = "Variable", y = "Estimated reliability", color = "Method") +
-  theme_minimal() +
+  labs(x = "Variable", y = "Estimated reliability", color = "Time control") +
+  facet_wrap(~method) +
+  theme_bw() +
   theme(text = element_text(size = 16)) +
   ylim(0, 1)
+
+
+res_m1 %>% 
+  ggplot(aes(x = var, y =  ids_used, color = time_cntrl)) +
+  geom_point(position = position_dodge(width = 0.5), size = 3) +
+  labs(x = "Variable", y = "Estimated reliability", color = "Method") +
+  facet_wrap(~method) +
+  theme_bw() 
+
 
 
