@@ -101,7 +101,8 @@ createModels("./mplus/auto/m2_template_cont_time.txt")
 
 # Run models ------------------------------------------
 runModels("./mplus/auto/", 
-          logFile = "./mplus/auto/log.txt")
+          logFile = "./mplus/auto/log.txt", 
+          showOutput = T)
 
 
 # Explore data with few used cases ------------------------------------------

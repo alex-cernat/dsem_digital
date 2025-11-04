@@ -1,0 +1,70 @@
+
+TITLE: Two-level AR(1) model for msg_c_l2;
+
+DATA:
+  FILE = "data_full_msg_c_l2.dat";
+
+VARIABLE:
+NAMES = new_id age female edu edu_low edu_med edu_high nr_dev w1_inet w1_sp w1_pc_nr
+     w1_sph_nr w1_tabl_nr date call_c msg_c phot_c call_d msg_d phot_d web_c web_d
+     sm_c sm_d w1_date w1b_date w1_date_7 w1_date_30 w1b_date_7 w1b_date_30
+     day_before_w1 day_before_w1b w1_7d_window w1b_7d_window w1_30d_window
+     w1b_30d_window days_c call_d_l msg_d_l phot_d_l web_d_l sm_d_l call_c_l msg_c_l
+     phot_c_l web_c_l sm_c_l days_c_l call_d_l2 msg_d_l2 phot_d_l2 web_d_l2 sm_d_l2
+     call_c_l2 msg_c_l2 phot_c_l2 web_c_l2 sm_c_l2 call_c_b msg_c_b phot_c_b web_c_b
+     sm_c_b time; 
+  MISSING = .;
+  USEVARIABLES = msg_c_l2 day_before_w1 female age edu_med edu_high nr_dev w1_inet;
+  WITHIN = day_before_w1;
+  BETWEEN = female age edu_med edu_high nr_dev;
+  CLUSTER = new_id;
+  TINTERVAL = time (1 time2);
+
+ANALYSIS:
+  TYPE = TWOLEVEL RANDOM;
+  ESTIMATOR = BAYES;
+  PROCESSORS = 30;
+  BITERATIONS = 80000 (10000);
+  THIN = 20;
+
+MODEL:
+
+%WITHIN%
+f BY msg_c_l2@1(&1);
+trend | msg_c_l2 ON day_before_w1;
+stab | f ON f&1;
+
+logv | msg_c_l2;
+
+day_before_w1;
+
+%BETWEEN%
+msg_c_l2 WITH stab trend;
+stab WITH trend;
+
+[logv] (m);
+logv (s);
+
+logv ON female age edu_med edu_high nr_dev;
+
+female;
+age;
+edu_med;
+edu_high;
+nr_dev;
+
+Model Constraint:
+          new(medv meanv 25qv 75qv);		
+          medv = exp(m);
+          meanv = exp(m + s/2);
+  		! 25th and 75th quartiles
+  		! based on normal dist of logv:
+  		25qv = exp(m - sqrt(s)*0.675);
+  		75qv = exp(m + sqrt(s)*0.675);
+
+
+
+
+OUTPUT: TECH1 TECH8 TECH4 STDYX residual;
+
+PLOT: TYPE = PLOT3;

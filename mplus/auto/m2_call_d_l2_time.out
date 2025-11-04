@@ -1,0 +1,1495 @@
+Mplus VERSION 9 (Linux)
+MUTHEN & MUTHEN
+11/02/2025  11:51 AM
+
+INPUT INSTRUCTIONS
+
+
+  TITLE: Two-level AR(1) model for call_d_l2;
+
+  DATA:
+    FILE = "data_full_call_d_l2.dat";
+
+  VARIABLE:
+  NAMES = new_id age female edu edu_low edu_med edu_high nr_dev w1_inet w1_sp w1_pc_nr
+       w1_sph_nr w1_tabl_nr date call_c msg_c phot_c call_d msg_d phot_d web_c web_d
+       sm_c sm_d w1_date w1b_date w1_date_7 w1_date_30 w1b_date_7 w1b_date_30
+       day_before_w1 day_before_w1b w1_7d_window w1b_7d_window w1_30d_window
+       w1b_30d_window days_c call_d_l msg_d_l phot_d_l web_d_l sm_d_l call_c_l msg_c_l
+       phot_c_l web_c_l sm_c_l days_c_l call_d_l2 msg_d_l2 phot_d_l2 web_d_l2 sm_d_l2
+       call_c_l2 msg_c_l2 phot_c_l2 web_c_l2 sm_c_l2 call_c_b msg_c_b phot_c_b web_c_b
+       sm_c_b time;
+    MISSING = .;
+    USEVARIABLES = call_d_l2 day_before_w1 female age edu_med edu_high nr_dev w1_inet;
+    WITHIN = day_before_w1;
+    BETWEEN = female age edu_med edu_high nr_dev;
+    CLUSTER = new_id;
+    TINTERVAL = time (1 time2);
+
+  ANALYSIS:
+    TYPE = TWOLEVEL RANDOM;
+    ESTIMATOR = BAYES;
+    PROCESSORS = 30;
+    BITERATIONS = 80000 (10000);
+    THIN = 20;
+
+  MODEL:
+
+  %WITHIN%
+  f BY call_d_l2@1(&1);
+  trend | call_d_l2 ON day_before_w1;
+  stab | f ON f&1;
+
+  logv | call_d_l2;
+
+  day_before_w1;
+
+  %BETWEEN%
+  call_d_l2 WITH stab trend;
+  stab WITH trend;
+
+  [logv] (m);
+  logv (s);
+
+  logv ON female age edu_med edu_high nr_dev;
+
+  female;
+  age;
+  edu_med;
+  edu_high;
+  nr_dev;
+
+  Model Constraint:
+            new(medv meanv 25qv 75qv);		
+            medv = exp(m);
+            meanv = exp(m + s/2);
+    		! 25th and 75th quartiles
+    		! based on normal dist of logv:
+    		25qv = exp(m - sqrt(s)*0.675);
+    		75qv = exp(m + sqrt(s)*0.675);
+
+
+
+
+  OUTPUT: TECH1 TECH8 TECH4 STDYX residual;
+
+  PLOT: TYPE = PLOT3;
+
+
+
+*** WARNING in VARIABLE command
+  Note that only the first 8 characters of variable names are used in the output.
+  Shorten variable names to avoid any confusion.
+*** WARNING in MODEL command
+  Variable is uncorrelated with all other variables: W1_INET
+*** WARNING in MODEL command
+  At least one variable is uncorrelated with all other variables in the model.
+  Check that this is what is intended.
+*** WARNING in PLOT command
+  Note that only the first 8 characters of variable names are used in plots.
+  If variable names are not unique within the first 8 characters, problems
+  may occur.
+*** WARNING
+  One or more individual-level variables have no variation within a
+  cluster for the following clusters.
+
+     Variable   Cluster IDs with no within-cluster variation
+
+      CALL_D_L    1770 2073 1966
+      W1_INET     514 2062 657 1796 501 1060 565 534 397 146 98 1874 2217 671 862 833 303 245
+                  1446 407 412 1540 752 463 773 1974 2012 1146 955 494 1197 1177 2144 1899 647
+                  2207 900 1361 189 1677 1025 226 521 1766 1211 825 337 2034 902 363 1101 2139
+                  620 931 762 2103 341 1273 435 982 384 538 681 2039 1666 1888 394 420 1877 1865
+                  1152 441 411 1155 386 270 1706 224 1430 1599 1780 1053 1337 1109 272 1343 365
+                  297 2007 1448 1549 1049 967 1317 1302 991 293 611 636 1159 1998 392 1122 1184
+                  1224 934 26 631 974 1544 286 2140 524 2129 260 1971 728 492 592 978 1551 1339
+                  495 1626 1516 380 667 108 1834 418 110 2043 205 284 187 196 147 182 212 148
+                  163 132 4 241 262 129 193 167 410 115 155 447 399 357 1468 455 452 274 440 301
+                  229 428 250 137 287 117 220 405 446 443 432 376 143 320 198 353 307 414 252
+                  217 246 1818 328 240 1210 1615 393 157 362 1227 370 235 398 172 239 396 177
+                  317 263 354 149 433 180 111 298 153 323 2211 453 368 277 186 1637 314 309 2223
+                  361 400 211 294 423 278 109 1808 1199 1580 1021 88 90 1478 1003 966 886 876
+                  1678 40 1905 1366 761 1307 1190 1524 1829 944 602 1661 1989 932 2115 593 1837
+                  695 1340 1182 2022 1135 885 1955 1618 2028 1202 999 52 1716 1326 933 2163 21
+                  772 829 1586 2067 1160 2001 678 1381 1645 2185 499 99 1008 1584 1811 1298 1585
+                  918 1324 2036 1788 605 1710 1659 2000 461 1303 896 1669 1311 930 62 1114 39
+                  1015 33 1770 1561 643 632 767 719 1249 1111 46 558 2040 2047 1940 1360 488 653
+                  2216 97 1708 1115 1024 1928 2111 725 2147 1760 1839 1847 1445 471 1703 895 1502
+                  12 616 1032 1778 1891 515 1773 1353 2073 1919 1421 79 1064 1601 1817 1581 2099
+                  1624 2199 85 2137 1879 822 874 1612 606 2081 541 484 2165 1246 613 35 853 1110
+                  486 717 639 2069 467 745 1934 1591 940 1686 1627 13 1720 965 1214 1350 1185
+                  784 2 1509 1248 858 894 1254 1315 557 1314 906 645 1873 1768 1951 2038 834 11
+                  1835 1472 2064 1323 1412 1870 1086 86 1727 1041 1608 1465 1623 1554 1365 498
+                  1291 1674 1030 1673 1715 977 1334 802 646 1542 674 1926 2141 1181 1077 1031
+                  1814 1044 1849 1075 946 2138 1568 562 92 821 1264 994 18 1981 630 44 2056 1902
+                  669 1330 2035 1759 1745 1033 1916 1850 1460 880 599 547 837 813 1924 1953 2082
+                  2070 1697 1276 680 712 1930 72 1790 986 809 992 1957 786 733 1840 506 1963 941
+                  953 1528 2024 544 29 1562 1371 1931 1979 1154 1259 1151 684 19 1091 1803 615
+                  579 1992 69 720 1644 1171 603 1774 2065 1946 1573 959 559 947 1714 1851 909
+                  582 1695 956 642 1067 1139 929 753 1646 77 889 864 1785 1923 2075 48 1256 59
+                  726 561 2052 37 1415 859 1809 100 1828 2150 711 735 1232 1947 665 1305 995 1607
+                  2044 807 2182 682 1656 1999 1035 1793 1485 1731 1001 553 1028 1757 600 1967
+                  1984 2213 1451 1546 644 2098 1654 1680 1461 1147 2003 105 1595 1881 763 1237
+                  2148 474 1935 1701 1572 2169 1263 782 1225 508 810 1966 1895 1498 470 993 1987
+                  1200 1789 870 686 2160 1402 1470 958 1588 849 1869 1189 2224 1522 65 2196 780
+                  901 93 740 1914 1729 2013 1128 1022 860 648 550 502 882 2197 1755 1294 1071
+                  2061 855 525 904 2181 1944 1765 973 938 987 1743 892 1231 709 2198 78 1352 1671
+                  1089 1791 640 1782 633 1280 1660 1590 1754 2121 1117 1675 1050 540 1613 1335
+                  1236 1997 552 1912 638 1174 845 1833 1648 520 32 1002 970 1133 2063 1104 2171
+
+   5 WARNING(S) FOUND IN THE INPUT INSTRUCTIONS
+
+
+
+Two-level AR(1) model for call_d_l2;
+
+SUMMARY OF ANALYSIS
+
+Number of groups                                                 1
+Number of observations                                       19703
+
+Number of dependent variables                                    2
+Number of independent variables                                  6
+Number of continuous latent variables                            5
+
+Observed dependent variables
+
+  Continuous
+   CALL_D_L2   W1_INET
+
+Observed independent variables
+   DAY_BEFO    FEMALE      AGE         EDU_MED     EDU_HIGH    NR_DEV
+
+Continuous latent variables
+   F           F&1         TREND       STAB        LOGV
+
+Variables with special functions
+
+  Cluster variable      NEW_ID
+
+  Within variables
+   DAY_BEFO
+
+  Between variables
+   FEMALE      AGE         EDU_MED     EDU_HIGH    NR_DEV
+
+
+Estimator                                                    BAYES
+Specifications for Bayesian Estimation
+  Point estimate                                            MEDIAN
+  Number of Markov chain Monte Carlo (MCMC) chains               2
+  Random seed for the first chain                                0
+  Starting value information                           UNPERTURBED
+  Algorithm used for Markov chain Monte Carlo           GIBBS(PX1)
+  Convergence criterion                                  0.500D-01
+  Maximum number of iterations                               80000
+  K-th iteration used for thinning                              20
+
+Input data file(s)
+  data_full_call_d_l2.dat
+Input data format  FREE
+
+
+SUMMARY OF DATA
+
+     Number of clusters                        696
+
+       Size (s)    Cluster ID with Size s
+
+          3        514
+          5        2062
+          6        657 1796 501
+          7        1060
+          8        565 534 397 146 98
+          9        1874
+         10        2217 671
+         11        862 833
+         12        303
+         13        245 1446
+         15        407 412
+         16        1540 752 463 773 1974
+         17        2012 1146
+         18        955 494 1197 1177
+         19        2144 1899 647 2207
+         20        900 1361 189 1677 1025 226
+         21        521 1766
+         22        1211 825 337 2034 902 363 1101 2139 620 931 762 2103
+         23        341 1273 435 982 384 538 681 2039 1666
+         24        1888 394 420 1877 1865 1152 441
+         25        411 1155 386 270 1706 224 1430 1599 1780 1053
+         26        1337 1109 272 1343 365 297 2007 1448 1549 1049
+         27        967 1317 1302 991 293 611 636 1159 1998 392 1122 1184
+                   1224
+         28        934 26 631 974 1544 286 2140 524 2129 260 1971 728 492
+                   592 978 1551 1339 495 1626 1516 380 667 108 1834
+         29        418 110 2043 205 284 187 196 147 182 212 148 163 132
+                   4 241 262 129 193 167 410 115 155 447 399 357 1468 455
+                   452 274 440 301 229 428 250 137 287 117 220 405 446
+                   443 432 376 143 320 198 353 307 414 252 217 246 1818
+                   328 240 1210 1615 393 157 362 1227 370 235 398 172 239
+                   396 177 317 263 354 149 433 180 111 298 153 323 2211
+                   453 368 277 186 1637 314 309 2223 361 400 211 294 423
+                   278 109 1808
+         30        1199 1580 1021 88 90 1478 1003 966 886 876 1678 40 1905
+                   1366 761 1307 1190 1524 1829 944 602 1661 1989 932 2115
+                   593 1837 695 1340 1182 2022 1135 885 1955 1618 2028
+                   1202 999 52 1716 1326 933 2163 21 772 829 1586 2067
+                   1160 2001 678 1381 1645 2185 499 99 1008 1584 1811 1298
+                   1585 918 1324 2036 1788 605 1710 1659 2000 461 1303
+                   896 1669 1311 930 62 1114 39 1015 33 1770 1561 643 632
+                   767 719 1249 1111 46 558 2040 2047 1940 1360 488 653
+                   2216 97 1708 1115 1024 1928 2111 725 2147 1760 1839
+                   1847 1445 471 1703 895 1502 12 616 1032 1778 1891 515
+                   1773 1353 2073 1919 1421 79 1064 1601 1817 1581 2099
+                   1624 2199 85 2137 1879 822 874 1612 606 2081 541 484
+                   2165 1246 613 35 853 1110 486 717 639 2069 467 745 1934
+                   1591 940 1686 1627 13 1720 965 1214 1350 1185 784 2
+                   1509 1248 858 894 1254 1315 557 1314 906 645 1873 1768
+                   1951 2038 834 11 1835 1472 2064 1323 1412 1870 1086
+                   86 1727 1041 1608 1465 1623 1554 1365 498 1291 1674
+                   1030 1673 1715 977 1334 802 646 1542 674 1926 2141 1181
+                   1077 1031 1814 1044 1849 1075 946 2138 1568 562 92 821
+                   1264 994 18 1981 630 44 2056 1902 669 1330 2035 1759
+                   1745 1033 1916 1850 1460 880 599 547 837 813 1924 1953
+                   2082 2070 1697 1276 680 712 1930 72 1790 986 809 992
+                   1957 786 733 1840 506 1963 941 953 1528 2024 544 29
+                   1562 1371 1931 1979 1154 1259 1151 684 19 1091 1803
+                   615 579 1992 69 720 1644 1171 603 1774 2065 1946 1573
+                   959 559 947 1714 1851 909 582 1695 956 642 1067 1139
+                   929 753 1646 77 889 864 1785 1923 2075 48 1256 59 726
+                   561 2052 37 1415 859 1809 100 1828 2150 711 735 1232
+                   1947 665 1305 995 1607 2044 807 2182 682 1656 1999 1035
+                   1793 1485 1731 1001 553 1028 1757 600 1967 1984 2213
+                   1451 1546 644 2098 1654 1680 1461 1147 2003 105 1595
+                   1881 763 1237 2148 474 1935 1701 1572 2169 1263 782
+                   1225 508 810 1966 1895 1498 470 993 1987 1200 1789 870
+                   686 2160 1402 1470 958 1588 849 1869 1189 2224 1522
+                   65 2196 780 901 93 740 1914 1729 2013 1128 1022 860
+                   648 550 502 882 2197 1755 1294 1071 2061 855 525 904
+                   2181 1944 1765 973 938 987 1743 892 1231 709 2198 78
+                   1352 1671 1089 1791 640 1782 633 1280 1660 1590 1754
+                   2121 1117 1675 1050 540 1613 1335 1236 1997 552 1912
+                   638 1174 845 1833 1648 520 32 1002 970 1133 2063 1104
+                   2171
+
+
+
+COVARIANCE COVERAGE OF DATA
+
+Minimum covariance coverage value   0.100
+
+     Number of missing data patterns            13
+
+
+     PROPORTION OF DATA PRESENT
+
+
+           Covariance Coverage
+              FEMALE        AGE           EDU_MED       EDU_HIGH      NR_DEV
+              ________      ________      ________      ________      ________
+ FEMALE         0.853
+ AGE            0.853         0.854
+ EDU_MED        0.853         0.854         1.000
+ EDU_HIGH       0.853         0.854         1.000         1.000
+ NR_DEV         0.853         0.854         1.000         1.000         1.000
+ CALL_D_L       0.330         0.330         0.379         0.379         0.379
+ DAY_BEFO       0.695         0.696         0.798         0.798         0.798
+ W1_INET        0.572         0.573         0.643         0.643         0.643
+
+
+           Covariance Coverage
+              CALL_D_L      DAY_BEFO      W1_INET
+              ________      ________      ________
+ CALL_D_L       0.379
+ DAY_BEFO       0.379         0.798
+ W1_INET        0.301         0.643         0.643
+
+
+
+UNIVARIATE SAMPLE STATISTICS
+
+
+     UNIVARIATE HIGHER-ORDER MOMENT DESCRIPTIVE STATISTICS
+
+         Variable/         Mean/     Skewness/   Minimum/ % with                Percentiles
+        Sample Size      Variance    Kurtosis    Maximum  Min/Max      20%/60%    40%/80%    Median
+
+     FEMALE                0.486       0.057       0.000   51.43%       0.000      0.000      0.000
+             593.000       0.250      -1.997       1.000   48.57%       1.000      1.000
+     AGE                  45.424      -0.181      14.000    0.17%      33.000     42.000     46.000
+             595.000     178.738      -0.821      78.000    0.17%      50.000     58.000
+     EDU_MED               0.435       0.261       0.000   56.47%       0.000      0.000      0.000
+             696.000       0.246      -1.932       1.000   43.53%       1.000      1.000
+     EDU_HIGH              0.414       0.350       0.000   58.62%       0.000      0.000      0.000
+             696.000       0.243      -1.877       1.000   41.38%       1.000      1.000
+     NR_DEV                2.402      -0.495       1.000    6.61%       2.000      2.000      2.000
+             696.000       0.373      -0.641       3.000   46.84%       3.000      3.000
+     CALL_D_L2            -0.197      -0.031      -4.094    3.01%      -1.792     -0.629     -0.143
+            7467.000       3.290      -0.418       5.093    0.01%       0.312      1.369
+     DAY_BEFORE_W1       -14.794       0.039     -29.000    3.17%     -23.000    -18.000    -15.000
+           15717.000      71.045      -1.147       0.000    3.00%     -12.000     -6.000
+     W1_INET               3.726       1.982       0.000    1.34%       1.000      2.500      3.000
+           12661.000       9.954       9.746      40.000    0.05%       3.500      5.917
+
+
+     WARNING: PROBLEMS OCCURRED IN SEVERAL ITERATIONS IN THE COMPUTATION OF THE STANDARDIZED ESTIMATES FOR SEVERAL
+     CLUSTERS. THIS IS MOST LIKELY DUE TO AR COEFFICIENTS GREATER THAN 1 OR PARAMETERS GIVING NON-STATIONARY MODELS.
+     SUCH POSTERIOR DRAWS ARE REMOVED. THE FOLLOWING CLUSTERS HAD SUCH PROBLEMS:
+          514 2062 657 1796 501 1060 565 534 397 146 98 1874 2217 671 862 833 303 245 1446 407 412 752
+          463 773 2012 1146 955 494 1197 1177 2144 1899 647 2207 1361 189 1677 1025 226 521 1211 825
+          2034 902 363 1101 2139 620 931 762 2103 341 1273 982 384 538 681 2039 1666 1888 394 1877 1865
+          1152 441 411 1155 386 270 1706 224 1430 1599 1053 1337 1109 272 1343 365 297 1448 1549 1049
+          1317 991 293 611 636 1159 1184 1224 934 26 631 1544 286 2140 524 2129 1971 592 978 1551 1339
+          1626 380 667 108 1834 418 110 2043 205 187 196 147 182 212 148 132 262 129 193 167 410 115
+          447 399 357 455 274 440 301 229 428 137 287 117 220 405 446 443 432 376 143 320 198 307 414
+          252 217 246 1818 328 240 1210 393 362 1227 370 235 172 239 177 317 263 149 433 180 111 298
+          153 323 2211 368 186 1637 314 309 2223 361 294 423 278 1808 1199 1580 1021 88 966 886 876 1678
+          40 1905 761 1524 1829 602 1989 932 593 1837 1340 1182 2022 885 1955 1618 1202 999 52 1716 1326
+          933 2163 21 829 1586 2067 1160 2001 678 2185 1584 1811 1298 1585 1324 2036 1788 605 1710 1659
+          2000 461 1303 1669 1311 930 1114 39 1015 33 1770 643 767 1111 46 558 2040 2047 1940 1360 488
+          653 2216 97 1708 1115 1024 1928 2111 725 2147 1760 1847 1445 471 1703 895 1502 12 616 1032
+          1778 1891 515 1773 1353 2073 1421 79 1064 1601 1817 1581 1624 2199 85 1879 822 2081 541 484
+          2165 1246 613 35 1110 486 717 639 2069 467 745 1934 1591 940 1686 13 1720 1214 1350 1185 784
+          2 1509 1248 858 894 1254 1315 1314 906 645 1768 2038 834 11 1835 1472 2064 1412 1870 86 1041
+          1608 1465 1365 498 1291 1674 1030 1673 1715 977 1334 674 1926 2141 1181 1077 1031 1814 1044
+          1849 946 2138 1568 562 821 1264 994 18 1981 44 2056 1902 2035 1745 1033 1916 1850 1460 599
+          547 1924 1953 1697 1276 680 712 1930 72 1790 809 992 1957 733 1840 953 2024 544 29 1562 1371
+          1931 1979 1154 1259 1151 684 19 1803 579 1992 69 720 1644 1171 2065 1946 1573 959 559 947 1714
+          1851 909 582 1695 956 642 1067 1139 753 1646 77 889 1785 1923 2075 48 1256 59 37 1415 859 100
+          1828 711 665 2044 1656 1999 1035 1793 1485 1001 1028 600 1967 1984 2213 1451 644 1147 2003
+          105 1881 1237 474 1935 1572 2169 1263 1225 508 810 1966 470 1987 1789 870 2160 958 1588 1869
+          1189 2224 1522 65 2196 780 901 93 740 1729 2013 1022 860 648 550 502 882 1755 1294 855 525
+          2181 1944 1765 973 987 1743 892 709 78 1352 1089 1791 640 633 1280 1660 1590 1754 2121 1117
+          1050 540 1613 1236 552 1912 638 1174 845 1833 1648 32 1002 970 1133 2063 2171
+
+THE MODEL ESTIMATION TERMINATED NORMALLY
+
+     USE THE FBITERATIONS OPTION TO INCREASE THE NUMBER OF ITERATIONS BY A FACTOR
+     OF AT LEAST TWO TO CHECK CONVERGENCE AND THAT THE PSR VALUE DOES NOT INCREASE.
+
+     THE EFFECTIVE SAMPLE SIZE FOR THE POSTERIOR DISTRIBUTION OF PARAMETER 1 IS LESS THAN 20.
+     ESS > 200-400 IS RECOMMENDED. USE BITER=200000(100000) OR SIMPLIFY THE MODEL.
+
+
+
+MODEL FIT INFORMATION
+
+Number of Free Parameters                              42
+
+Information Criteria
+
+          Deviance (DIC)                     ************
+          Estimated Number of Parameters (pD)************
+
+
+
+MODEL RESULTS
+
+                                Posterior  One-Tailed         95% C.I.
+                    Estimate       S.D.      P-Value   Lower 2.5%  Upper 2.5%  Significance
+
+Within Level
+
+ F        BY
+    CALL_D_L2          1.000       0.000      0.000       1.000       1.000
+
+ Means
+    DAY_BEFORE       -14.794       0.067      0.000     -14.925     -14.665      *
+
+ Variances
+    DAY_BEFORE        71.066       0.800      0.000      69.536      72.640      *
+    W1_INET            0.000       0.000      0.000       0.000       0.000      *
+
+ Residual Variances
+    F                  0.294       0.110      0.000       0.112       0.540      *
+
+Between Level
+
+ LOGV       ON
+    FEMALE            -0.062       0.067      0.170      -0.194       0.067
+    AGE                0.001       0.003      0.338      -0.004       0.006
+    EDU_MED            0.147       0.095      0.057      -0.039       0.339
+    EDU_HIGH           0.184       0.099      0.031      -0.009       0.378
+    NR_DEV            -0.015       0.052      0.378      -0.117       0.085
+
+ CALL_D_L WITH
+    STAB               0.047       0.061      0.221      -0.072       0.165
+    TREND              0.013       0.003      0.000       0.007       0.020      *
+
+ STAB     WITH
+    TREND              0.000       0.001      0.404      -0.002       0.002
+
+ AGE      WITH
+    FEMALE            -0.332       0.280      0.117      -0.890       0.215
+
+ EDU_MED  WITH
+    FEMALE            -0.006       0.011      0.287      -0.027       0.014
+    AGE                1.179       0.283      0.000       0.641       1.756      *
+
+ EDU_HIGH WITH
+    FEMALE            -0.004       0.010      0.336      -0.025       0.016
+    AGE               -1.646       0.282      0.000      -2.209      -1.109      *
+    EDU_MED           -0.183       0.012      0.000      -0.208      -0.162      *
+
+ NR_DEV   WITH
+    FEMALE            -0.036       0.013      0.002      -0.062      -0.012      *
+    AGE                0.535       0.339      0.056      -0.130       1.196
+    EDU_MED           -0.016       0.012      0.085      -0.040       0.007
+    EDU_HIGH           0.036       0.012      0.001       0.013       0.059      *
+
+ Means
+    FEMALE             0.486       0.021      0.000       0.446       0.527      *
+    AGE               45.457       0.559      0.000      44.364      46.567      *
+    EDU_MED            0.435       0.019      0.000       0.398       0.473      *
+    EDU_HIGH           0.414       0.019      0.000       0.377       0.451      *
+    NR_DEV             2.403       0.024      0.000       2.355       2.448      *
+    CALL_D_L2         -0.423       0.061      0.000      -0.542      -0.305      *
+    W1_INET            3.339       0.136      0.000       3.072       3.596      *
+    TREND              0.004       0.003      0.073      -0.001       0.009
+    STAB               0.257       0.084      0.000       0.108       0.440      *
+
+ Intercepts
+    LOGV               0.262       0.206      0.105      -0.163       0.645
+
+ Variances
+    FEMALE             0.255       0.015      0.000       0.228       0.287      *
+    AGE              182.449      10.711      0.000     163.018     204.886      *
+    EDU_MED            0.250       0.014      0.000       0.225       0.278      *
+    EDU_HIGH           0.247       0.013      0.000       0.222       0.275      *
+    NR_DEV             0.379       0.020      0.000       0.342       0.422      *
+    CALL_D_L2          1.461       0.125      0.000       1.232       1.720      *
+    W1_INET           11.540       0.644      0.000      10.379      12.909      *
+    TREND              0.001       0.000      0.000       0.001       0.001      *
+    STAB               0.029       0.018      0.000       0.005       0.073      *
+
+ Residual Variances
+    LOGV               0.226       0.045      0.000       0.156       0.331      *
+
+New/Additional Parameters
+    MEDV               1.300       0.271      0.000       0.850       1.907      *
+    MEANV              1.458       0.297      0.000       0.968       2.132      *
+    25QV               0.944       0.207      0.000       0.598       1.402      *
+    75QV               1.793       0.363      0.000       1.195       2.621      *
+
+
+STANDARDIZED MODEL RESULTS
+
+
+STDYX Standardization
+
+                                Posterior  One-Tailed         95% C.I.
+                    Estimate       S.D.      P-Value   Lower 2.5%  Upper 2.5%  Significance
+
+Within-Level Standardized Estimates Averaged Over Clusters
+
+ F        BY
+    CALL_D_L2          0.404       0.098      0.000       0.241       0.583      *
+
+ STAB | F ON
+    F&1                0.254       0.102      0.002       0.101       0.497      *
+
+ TREND | CALL_D_L2 ON
+    DAY_BEFORE         0.023       0.014      0.045      -0.003       0.049
+
+ LOGV |
+    CALL_D_L2          0.795       0.083      0.000       0.614       0.904      *
+
+ Means
+    DAY_BEFORE        -1.754       0.012      0.000      -1.779      -1.730      *
+
+ Variances
+    DAY_BEFORE         1.000       0.000      0.000       1.000       1.000
+    W1_INET            1.000       0.000      0.000       1.000       1.000
+
+ Residual Variances
+    F                  0.900       0.059      0.000       0.736       0.964      *
+
+Between Level
+
+ LOGV       ON
+    FEMALE            -0.064       0.069      0.170      -0.199       0.069
+    AGE                0.031       0.072      0.338      -0.111       0.169
+    EDU_MED            0.152       0.096      0.057      -0.041       0.339
+    EDU_HIGH           0.187       0.099      0.031      -0.010       0.379
+    NR_DEV            -0.020       0.065      0.378      -0.147       0.107
+
+ CALL_D_L WITH
+    STAB               0.242       0.312      0.221      -0.447       0.799
+    TREND              0.345       0.075      0.000       0.188       0.484      *
+
+ STAB     WITH
+    TREND              0.047       0.180      0.404      -0.317       0.375
+
+ AGE      WITH
+    FEMALE            -0.049       0.041      0.117      -0.128       0.031
+
+ EDU_MED  WITH
+    FEMALE            -0.024       0.042      0.287      -0.107       0.057
+    AGE                0.175       0.040      0.000       0.096       0.253      *
+
+ EDU_HIGH WITH
+    FEMALE            -0.018       0.041      0.336      -0.098       0.062
+    AGE               -0.245       0.038      0.000      -0.319      -0.169      *
+    EDU_MED           -0.738       0.017      0.000      -0.771      -0.702      *
+
+ NR_DEV   WITH
+    FEMALE            -0.117       0.041      0.002      -0.196      -0.038      *
+    AGE                0.064       0.040      0.056      -0.016       0.142
+    EDU_MED           -0.053       0.038      0.085      -0.126       0.023
+    EDU_HIGH           0.116       0.038      0.001       0.042       0.191      *
+
+ Means
+    FEMALE             0.963       0.050      0.000       0.867       1.061      *
+    AGE                3.366       0.106      0.000       3.162       3.573      *
+    EDU_MED            0.871       0.045      0.000       0.783       0.958      *
+    EDU_HIGH           0.834       0.044      0.000       0.748       0.921      *
+    NR_DEV             3.902       0.112      0.000       3.684       4.119      *
+    CALL_D_L2         -0.351       0.051      0.000      -0.450      -0.252      *
+    W1_INET            0.983       0.050      0.000       0.886       1.080      *
+    TREND              0.126       0.084      0.073      -0.041       0.287
+    STAB               1.541       1.094      0.000       0.487       4.644      *
+
+ Intercepts
+    LOGV               0.541       0.438      0.105      -0.307       1.414
+
+ Variances
+    FEMALE             1.000       0.000      0.000       1.000       1.000
+    AGE                1.000       0.000      0.000       1.000       1.000
+    EDU_MED            1.000       0.000      0.000       1.000       1.000
+    EDU_HIGH           1.000       0.000      0.000       1.000       1.000
+    NR_DEV             1.000       0.000      0.000       1.000       1.000
+    CALL_D_L2          1.000       0.000      0.000       1.000       1.000
+    W1_INET            1.000       0.000      0.000       1.000       1.000
+    TREND              1.000       0.000      0.000       1.000       1.000
+    STAB               1.000       0.000      0.000       1.000       1.000
+
+ Residual Variances
+    LOGV               0.961       0.023      0.000       0.905       0.991      *
+
+
+R-SQUARE
+
+Within-Level R-Square Averaged Across Clusters
+
+                                Posterior  One-Tailed         95% C.I.
+    Variable        Estimate       S.D.      P-Value   Lower 2.5%  Upper 2.5%
+
+    CALL_D_L2          0.205       0.083      0.000       0.096       0.386
+
+                                Posterior  One-Tailed         95% C.I.
+    Variable        Estimate       S.D.      P-Value   Lower 2.5%  Upper 2.5%
+
+    F                  0.100       0.059      0.000       0.036       0.264
+
+Between Level
+
+                                Posterior  One-Tailed         95% C.I.
+    Variable        Estimate       S.D.      P-Value   Lower 2.5%  Upper 2.5%
+
+    LOGV               0.039       0.023      0.000       0.009       0.095
+
+
+RESIDUAL OUTPUT
+
+
+     ESTIMATED MODEL
+
+
+     AVERAGE CLUSTER ESTIMATES
+
+
+           Means
+              FEMALE        AGE           EDU_MED       EDU_HIGH      NR_DEV
+              ________      ________      ________      ________      ________
+                0.486        45.469         0.435         0.414         2.402
+
+
+           Means
+              CALL_D_L      DAY_BEFO      W1_INET
+              ________      ________      ________
+               -0.479       -14.794         3.273
+
+
+           Covariances
+              FEMALE        AGE           EDU_MED       EDU_HIGH      NR_DEV
+              ________      ________      ________      ________      ________
+ FEMALE         0.000
+ AGE            0.000         0.000
+ EDU_MED        0.000         0.000         0.000
+ EDU_HIGH       0.000         0.000         0.000         0.000
+ NR_DEV         0.000         0.000         0.000         0.000         0.000
+ CALL_D_L       0.000         0.000         0.000         0.000         0.000
+ DAY_BEFO       0.000         0.000         0.000         0.000         0.000
+ W1_INET        0.000         0.000         0.000         0.000         0.000
+
+
+           Covariances
+              CALL_D_L      DAY_BEFO      W1_INET
+              ________      ________      ________
+ CALL_D_L       2.062
+ DAY_BEFO       0.274        71.068
+ W1_INET        0.000         0.000         0.000
+
+
+           Correlations
+              FEMALE        AGE           EDU_MED       EDU_HIGH      NR_DEV
+              ________      ________      ________      ________      ________
+ FEMALE         1.000
+ AGE            0.000         1.000
+ EDU_MED        0.000         0.000         1.000
+ EDU_HIGH       0.000         0.000         0.000         1.000
+ NR_DEV         0.000         0.000         0.000         0.000         1.000
+ CALL_D_L       0.000         0.000         0.000         0.000         0.000
+ DAY_BEFO       0.000         0.000         0.000         0.000         0.000
+ W1_INET        0.000         0.000         0.000         0.000         0.000
+
+
+           Correlations
+              CALL_D_L      DAY_BEFO      W1_INET
+              ________      ________      ________
+ CALL_D_L       1.000
+ DAY_BEFO       0.023         1.000
+ W1_INET        0.000         0.000         1.000
+
+
+     BETWEEN LEVEL
+
+
+           Means
+              FEMALE        AGE           EDU_MED       EDU_HIGH      NR_DEV
+              ________      ________      ________      ________      ________
+                0.486        45.457         0.435         0.414         2.403
+
+
+           Means
+              CALL_D_L      DAY_BEFO      W1_INET
+              ________      ________      ________
+               -0.423         0.000         3.339
+
+
+           Covariances
+              FEMALE        AGE           EDU_MED       EDU_HIGH      NR_DEV
+              ________      ________      ________      ________      ________
+ FEMALE         0.255
+ AGE           -0.332       182.449
+ EDU_MED       -0.006         1.179         0.250
+ EDU_HIGH      -0.004        -1.646        -0.183         0.247
+ NR_DEV        -0.036         0.535        -0.016         0.036         0.379
+ CALL_D_L       0.000         0.000         0.000         0.000         0.000
+ DAY_BEFO       0.000         0.000         0.000         0.000         0.000
+ W1_INET        0.000         0.000         0.000         0.000         0.000
+
+
+           Covariances
+              CALL_D_L      DAY_BEFO      W1_INET
+              ________      ________      ________
+ CALL_D_L       1.461
+ DAY_BEFO       0.000         0.000
+ W1_INET        0.000         0.000        11.540
+
+
+           Correlations
+              FEMALE        AGE           EDU_MED       EDU_HIGH      NR_DEV
+              ________      ________      ________      ________      ________
+ FEMALE         1.000
+ AGE           -0.049         1.000
+ EDU_MED       -0.024         0.175         1.000
+ EDU_HIGH      -0.018        -0.245        -0.738         1.000
+ NR_DEV        -0.117         0.064        -0.053         0.116         1.000
+ CALL_D_L       0.000         0.000         0.000         0.000         0.000
+ DAY_BEFO       0.000         0.000         0.000         0.000         0.000
+ W1_INET        0.000         0.000         0.000         0.000         0.000
+
+
+           Correlations
+              CALL_D_L      DAY_BEFO      W1_INET
+              ________      ________      ________
+ CALL_D_L       1.000
+ DAY_BEFO       0.000         1.000
+ W1_INET        0.000         0.000         1.000
+
+
+TECHNICAL 1 OUTPUT
+
+
+     PARAMETER SPECIFICATION FOR WITHIN
+
+
+           NU
+              CALL_D_L      DAY_BEFO      W1_INET
+              ________      ________      ________
+                    0             0             0
+
+
+           LAMBDA
+              F             F&1           CALL_D_L      DAY_BEFO
+              ________      ________      ________      ________
+ CALL_D_L           0             0             0             0
+ DAY_BEFO           0             0             0             0
+ W1_INET            0             0             0             0
+
+
+           THETA
+              CALL_D_L      DAY_BEFO      W1_INET
+              ________      ________      ________
+ CALL_D_L           0
+ DAY_BEFO           0             0
+ W1_INET            0             0             1
+
+
+           ALPHA
+              F             F&1           CALL_D_L      DAY_BEFO
+              ________      ________      ________      ________
+                    0             0             0             2
+
+
+           BETA
+              F             F&1           CALL_D_L      DAY_BEFO
+              ________      ________      ________      ________
+ F                  0             0             0             0
+ F&1                0             0             0             0
+ CALL_D_L           0             0             0             0
+ DAY_BEFO           0             0             0             0
+
+
+           PSI
+              F             F&1           CALL_D_L      DAY_BEFO
+              ________      ________      ________      ________
+ F                  3
+ F&1                0             0
+ CALL_D_L           0             0             0
+ DAY_BEFO           0             0             0             4
+
+
+     PARAMETER SPECIFICATION FOR BETWEEN
+
+
+           NU
+              FEMALE        AGE           EDU_MED       EDU_HIGH      NR_DEV
+              ________      ________      ________      ________      ________
+                    0             0             0             0             0
+
+
+           NU
+              CALL_D_L      W1_INET
+              ________      ________
+                    0             5
+
+
+           LAMBDA
+              TREND         STAB          LOGV          FEMALE        AGE
+              ________      ________      ________      ________      ________
+ FEMALE             0             0             0             0             0
+ AGE                0             0             0             0             0
+ EDU_MED            0             0             0             0             0
+ EDU_HIGH           0             0             0             0             0
+ NR_DEV             0             0             0             0             0
+ CALL_D_L           0             0             0             0             0
+ W1_INET            0             0             0             0             0
+
+
+           LAMBDA
+              EDU_MED       EDU_HIGH      NR_DEV        CALL_D_L
+              ________      ________      ________      ________
+ FEMALE             0             0             0             0
+ AGE                0             0             0             0
+ EDU_MED            0             0             0             0
+ EDU_HIGH           0             0             0             0
+ NR_DEV             0             0             0             0
+ CALL_D_L           0             0             0             0
+ W1_INET            0             0             0             0
+
+
+           THETA
+              FEMALE        AGE           EDU_MED       EDU_HIGH      NR_DEV
+              ________      ________      ________      ________      ________
+ FEMALE             0
+ AGE                0             0
+ EDU_MED            0             0             0
+ EDU_HIGH           0             0             0             0
+ NR_DEV             0             0             0             0             0
+ CALL_D_L           0             0             0             0             0
+ W1_INET            0             0             0             0             0
+
+
+           THETA
+              CALL_D_L      W1_INET
+              ________      ________
+ CALL_D_L           0
+ W1_INET            0             6
+
+
+           ALPHA
+              TREND         STAB          LOGV          FEMALE        AGE
+              ________      ________      ________      ________      ________
+                    7             8             9            10            11
+
+
+           ALPHA
+              EDU_MED       EDU_HIGH      NR_DEV        CALL_D_L
+              ________      ________      ________      ________
+                   12            13            14            15
+
+
+           BETA
+              TREND         STAB          LOGV          FEMALE        AGE
+              ________      ________      ________      ________      ________
+ TREND              0             0             0             0             0
+ STAB               0             0             0             0             0
+ LOGV               0             0             0            16            17
+ FEMALE             0             0             0             0             0
+ AGE                0             0             0             0             0
+ EDU_MED            0             0             0             0             0
+ EDU_HIGH           0             0             0             0             0
+ NR_DEV             0             0             0             0             0
+ CALL_D_L           0             0             0             0             0
+
+
+           BETA
+              EDU_MED       EDU_HIGH      NR_DEV        CALL_D_L
+              ________      ________      ________      ________
+ TREND              0             0             0             0
+ STAB               0             0             0             0
+ LOGV              18            19            20             0
+ FEMALE             0             0             0             0
+ AGE                0             0             0             0
+ EDU_MED            0             0             0             0
+ EDU_HIGH           0             0             0             0
+ NR_DEV             0             0             0             0
+ CALL_D_L           0             0             0             0
+
+
+           PSI
+              TREND         STAB          LOGV          FEMALE        AGE
+              ________      ________      ________      ________      ________
+ TREND             21
+ STAB              22            23
+ LOGV               0             0            24
+ FEMALE             0             0             0            25
+ AGE                0             0             0            26            27
+ EDU_MED            0             0             0            28            29
+ EDU_HIGH           0             0             0            31            32
+ NR_DEV             0             0             0            35            36
+ CALL_D_L          40            41             0             0             0
+
+
+           PSI
+              EDU_MED       EDU_HIGH      NR_DEV        CALL_D_L
+              ________      ________      ________      ________
+ EDU_MED           30
+ EDU_HIGH          33            34
+ NR_DEV            37            38            39
+ CALL_D_L           0             0             0            42
+
+
+     PARAMETER SPECIFICATION FOR THE ADDITIONAL PARAMETERS
+
+
+           NEW/ADDITIONAL PARAMETERS
+              MEDV          MEANV         25QV          75QV
+              ________      ________      ________      ________
+                   43            44            45            46
+
+
+     STARTING VALUES FOR WITHIN
+
+
+           NU
+              CALL_D_L      DAY_BEFO      W1_INET
+              ________      ________      ________
+                0.000         0.000         0.000
+
+
+           LAMBDA
+              F             F&1           CALL_D_L      DAY_BEFO
+              ________      ________      ________      ________
+ CALL_D_L       0.000         0.000         1.000         0.000
+ DAY_BEFO       0.000         0.000         0.000         1.000
+ W1_INET        0.000         0.000         0.000         0.000
+
+
+           THETA
+              CALL_D_L      DAY_BEFO      W1_INET
+              ________      ________      ________
+ CALL_D_L       0.000
+ DAY_BEFO       0.000         0.000
+ W1_INET        0.000         0.000         4.977
+
+
+           ALPHA
+              F             F&1           CALL_D_L      DAY_BEFO
+              ________      ________      ________      ________
+                0.000         0.000         0.000       -14.794
+
+
+           BETA
+              F             F&1           CALL_D_L      DAY_BEFO
+              ________      ________      ________      ________
+ F              0.000         0.000         0.000         0.000
+ F&1            0.000         0.000         0.000         0.000
+ CALL_D_L       1.000         0.000         0.000         0.000
+ DAY_BEFO       0.000         0.000         0.000         0.000
+
+
+           PSI
+              F             F&1           CALL_D_L      DAY_BEFO
+              ________      ________      ________      ________
+ F              1.000
+ F&1            0.000         1.000
+ CALL_D_L       0.000         0.000         0.000
+ DAY_BEFO       0.000         0.000         0.000        35.523
+
+
+     STARTING VALUES FOR BETWEEN
+
+
+           NU
+              FEMALE        AGE           EDU_MED       EDU_HIGH      NR_DEV
+              ________      ________      ________      ________      ________
+                0.000         0.000         0.000         0.000         0.000
+
+
+           NU
+              CALL_D_L      W1_INET
+              ________      ________
+                0.000         3.726
+
+
+           LAMBDA
+              TREND         STAB          LOGV          FEMALE        AGE
+              ________      ________      ________      ________      ________
+ FEMALE         0.000         0.000         0.000         1.000         0.000
+ AGE            0.000         0.000         0.000         0.000         1.000
+ EDU_MED        0.000         0.000         0.000         0.000         0.000
+ EDU_HIGH       0.000         0.000         0.000         0.000         0.000
+ NR_DEV         0.000         0.000         0.000         0.000         0.000
+ CALL_D_L       0.000         0.000         0.000         0.000         0.000
+ W1_INET        0.000         0.000         0.000         0.000         0.000
+
+
+           LAMBDA
+              EDU_MED       EDU_HIGH      NR_DEV        CALL_D_L
+              ________      ________      ________      ________
+ FEMALE         0.000         0.000         0.000         0.000
+ AGE            0.000         0.000         0.000         0.000
+ EDU_MED        1.000         0.000         0.000         0.000
+ EDU_HIGH       0.000         1.000         0.000         0.000
+ NR_DEV         0.000         0.000         1.000         0.000
+ CALL_D_L       0.000         0.000         0.000         1.000
+ W1_INET        0.000         0.000         0.000         0.000
+
+
+           THETA
+              FEMALE        AGE           EDU_MED       EDU_HIGH      NR_DEV
+              ________      ________      ________      ________      ________
+ FEMALE         0.000
+ AGE            0.000         0.000
+ EDU_MED        0.000         0.000         0.000
+ EDU_HIGH       0.000         0.000         0.000         0.000
+ NR_DEV         0.000         0.000         0.000         0.000         0.000
+ CALL_D_L       0.000         0.000         0.000         0.000         0.000
+ W1_INET        0.000         0.000         0.000         0.000         0.000
+
+
+           THETA
+              CALL_D_L      W1_INET
+              ________      ________
+ CALL_D_L       0.000
+ W1_INET        0.000         4.977
+
+
+           ALPHA
+              TREND         STAB          LOGV          FEMALE        AGE
+              ________      ________      ________      ________      ________
+                0.000         0.000         0.000         0.484        45.477
+
+
+           ALPHA
+              EDU_MED       EDU_HIGH      NR_DEV        CALL_D_L
+              ________      ________      ________      ________
+                0.440         0.409         2.400        -0.197
+
+
+           BETA
+              TREND         STAB          LOGV          FEMALE        AGE
+              ________      ________      ________      ________      ________
+ TREND          0.000         0.000         0.000         0.000         0.000
+ STAB           0.000         0.000         0.000         0.000         0.000
+ LOGV           0.000         0.000         0.000         0.000         0.000
+ FEMALE         0.000         0.000         0.000         0.000         0.000
+ AGE            0.000         0.000         0.000         0.000         0.000
+ EDU_MED        0.000         0.000         0.000         0.000         0.000
+ EDU_HIGH       0.000         0.000         0.000         0.000         0.000
+ NR_DEV         0.000         0.000         0.000         0.000         0.000
+ CALL_D_L       0.000         0.000         0.000         0.000         0.000
+
+
+           BETA
+              EDU_MED       EDU_HIGH      NR_DEV        CALL_D_L
+              ________      ________      ________      ________
+ TREND          0.000         0.000         0.000         0.000
+ STAB           0.000         0.000         0.000         0.000
+ LOGV           0.000         0.000         0.000         0.000
+ FEMALE         0.000         0.000         0.000         0.000
+ AGE            0.000         0.000         0.000         0.000
+ EDU_MED        0.000         0.000         0.000         0.000
+ EDU_HIGH       0.000         0.000         0.000         0.000
+ NR_DEV         0.000         0.000         0.000         0.000
+ CALL_D_L       0.000         0.000         0.000         0.000
+
+
+           PSI
+              TREND         STAB          LOGV          FEMALE        AGE
+              ________      ________      ________      ________      ________
+ TREND          1.000
+ STAB           0.000         1.000
+ LOGV           0.000         0.000         1.000
+ FEMALE         0.000         0.000         0.000         0.125
+ AGE            0.000         0.000         0.000         0.000        89.029
+ EDU_MED        0.000         0.000         0.000         0.000         0.000
+ EDU_HIGH       0.000         0.000         0.000         0.000         0.000
+ NR_DEV         0.000         0.000         0.000         0.000         0.000
+ CALL_D_L       0.000         0.000         0.000         0.000         0.000
+
+
+           PSI
+              EDU_MED       EDU_HIGH      NR_DEV        CALL_D_L
+              ________      ________      ________      ________
+ EDU_MED        0.123
+ EDU_HIGH       0.000         0.121
+ NR_DEV         0.000         0.000         0.186
+ CALL_D_L       0.000         0.000         0.000         1.645
+
+
+     STARTING VALUES FOR THE ADDITIONAL PARAMETERS
+
+
+           NEW/ADDITIONAL PARAMETERS
+              MEDV          MEANV         25QV          75QV
+              ________      ________      ________      ________
+                0.500         0.500         0.500         0.500
+
+
+
+     PRIORS FOR ALL PARAMETERS            PRIOR MEAN      PRIOR VARIANCE     PRIOR STD. DEV.
+
+     Parameter 1~IG(-1.000,0.000)          infinity            infinity            infinity
+     Parameter 2~N(0.000,infinity)           0.0000            infinity            infinity
+     Parameter 3~IG(-1.000,0.000)          infinity            infinity            infinity
+     Parameter 4~IG(-1.000,0.000)          infinity            infinity            infinity
+     Parameter 5~N(0.000,infinity)           0.0000            infinity            infinity
+     Parameter 6~IG(-1.000,0.000)          infinity            infinity            infinity
+     Parameter 7~N(0.000,infinity)           0.0000            infinity            infinity
+     Parameter 8~N(0.000,infinity)           0.0000            infinity            infinity
+     Parameter 9~N(0.000,infinity)           0.0000            infinity            infinity
+     Parameter 10~N(0.000,infinity)          0.0000            infinity            infinity
+     Parameter 11~N(0.000,infinity)          0.0000            infinity            infinity
+     Parameter 12~N(0.000,infinity)          0.0000            infinity            infinity
+     Parameter 13~N(0.000,infinity)          0.0000            infinity            infinity
+     Parameter 14~N(0.000,infinity)          0.0000            infinity            infinity
+     Parameter 15~N(0.000,infinity)          0.0000            infinity            infinity
+     Parameter 16~N(0.000,infinity)          0.0000            infinity            infinity
+     Parameter 17~N(0.000,infinity)          0.0000            infinity            infinity
+     Parameter 18~N(0.000,infinity)          0.0000            infinity            infinity
+     Parameter 19~N(0.000,infinity)          0.0000            infinity            infinity
+     Parameter 20~N(0.000,infinity)          0.0000            infinity            infinity
+     Parameter 21~IW(0.000,-4)             infinity            infinity            infinity
+     Parameter 22~IW(0.000,-4)             infinity            infinity            infinity
+     Parameter 23~IW(0.000,-4)             infinity            infinity            infinity
+     Parameter 24~IG(-1.000,0.000)         infinity            infinity            infinity
+     Parameter 25~IW(0.000,-6)             infinity            infinity            infinity
+     Parameter 26~IW(0.000,-6)             infinity            infinity            infinity
+     Parameter 27~IW(0.000,-6)             infinity            infinity            infinity
+     Parameter 28~IW(0.000,-6)             infinity            infinity            infinity
+     Parameter 29~IW(0.000,-6)             infinity            infinity            infinity
+     Parameter 30~IW(0.000,-6)             infinity            infinity            infinity
+     Parameter 31~IW(0.000,-6)             infinity            infinity            infinity
+     Parameter 32~IW(0.000,-6)             infinity            infinity            infinity
+     Parameter 33~IW(0.000,-6)             infinity            infinity            infinity
+     Parameter 34~IW(0.000,-6)             infinity            infinity            infinity
+     Parameter 35~IW(0.000,-6)             infinity            infinity            infinity
+     Parameter 36~IW(0.000,-6)             infinity            infinity            infinity
+     Parameter 37~IW(0.000,-6)             infinity            infinity            infinity
+     Parameter 38~IW(0.000,-6)             infinity            infinity            infinity
+     Parameter 39~IW(0.000,-6)             infinity            infinity            infinity
+     Parameter 40~IW(0.000,-4)             infinity            infinity            infinity
+     Parameter 41~IW(0.000,-4)             infinity            infinity            infinity
+     Parameter 42~IW(0.000,-4)             infinity            infinity            infinity
+
+
+TECHNICAL 4 OUTPUT
+
+
+     AVERAGE ESTIMATES DERIVED FROM THE MODEL FOR WITHIN
+
+
+           ESTIMATED MEANS FOR THE LATENT VARIABLES
+              F             F&1           TREND         STAB          LOGV
+              ________      ________      ________      ________      ________
+                0.000         0.000         0.004         0.249         0.350
+
+
+           ESTIMATED MEANS FOR THE LATENT VARIABLES
+              FEMALE        AGE           EDU_MED       EDU_HIGH      NR_DEV
+              ________      ________      ________      ________      ________
+                0.486        45.469         0.435         0.414         2.402
+
+
+           ESTIMATED MEANS FOR THE LATENT VARIABLES
+              CALL_D_L      DAY_BEFO
+              ________      ________
+               -0.479       -14.794
+
+
+           ESTIMATED COVARIANCE MATRIX FOR THE LATENT VARIABLES
+              F             F&1           TREND         STAB          LOGV
+              ________      ________      ________      ________      ________
+ F              0.383
+ F&1            0.101         0.383
+ TREND          0.000         0.000         0.000
+ STAB           0.000         0.000         0.000         0.000
+ LOGV           0.000         0.000         0.000         0.000         0.000
+ FEMALE         0.000         0.000         0.000         0.000         0.000
+ AGE            0.000         0.000         0.000         0.000         0.000
+ EDU_MED        0.000         0.000         0.000         0.000         0.000
+ EDU_HIGH       0.000         0.000         0.000         0.000         0.000
+ NR_DEV         0.000         0.000         0.000         0.000         0.000
+ CALL_D_L       0.383         0.101         0.000         0.000         0.000
+ DAY_BEFO       0.000         0.000         0.000         0.000         0.000
+
+
+           ESTIMATED COVARIANCE MATRIX FOR THE LATENT VARIABLES
+              FEMALE        AGE           EDU_MED       EDU_HIGH      NR_DEV
+              ________      ________      ________      ________      ________
+ FEMALE         0.000
+ AGE            0.000         0.000
+ EDU_MED        0.000         0.000         0.000
+ EDU_HIGH       0.000         0.000         0.000         0.000
+ NR_DEV         0.000         0.000         0.000         0.000         0.000
+ CALL_D_L       0.000         0.000         0.000         0.000         0.000
+ DAY_BEFO       0.000         0.000         0.000         0.000         0.000
+
+
+           ESTIMATED COVARIANCE MATRIX FOR THE LATENT VARIABLES
+              CALL_D_L      DAY_BEFO
+              ________      ________
+ CALL_D_L       2.062
+ DAY_BEFO       0.274        71.068
+
+
+           ESTIMATED CORRELATION MATRIX FOR THE LATENT VARIABLES
+              F             F&1           TREND         STAB          LOGV
+              ________      ________      ________      ________      ________
+ F              1.000
+ F&1            0.261         1.000
+ TREND          0.000         0.000         1.000
+ STAB           0.000         0.000         0.000         1.000
+ LOGV           0.000         0.000         0.000         0.000         1.000
+ FEMALE         0.000         0.000         0.000         0.000         0.000
+ AGE            0.000         0.000         0.000         0.000         0.000
+ EDU_MED        0.000         0.000         0.000         0.000         0.000
+ EDU_HIGH       0.000         0.000         0.000         0.000         0.000
+ NR_DEV         0.000         0.000         0.000         0.000         0.000
+ CALL_D_L       0.439         0.115         0.000         0.000         0.000
+ DAY_BEFO       0.000         0.000         0.000         0.000         0.000
+
+
+           ESTIMATED CORRELATION MATRIX FOR THE LATENT VARIABLES
+              FEMALE        AGE           EDU_MED       EDU_HIGH      NR_DEV
+              ________      ________      ________      ________      ________
+ FEMALE         1.000
+ AGE            0.000         1.000
+ EDU_MED        0.000         0.000         1.000
+ EDU_HIGH       0.000         0.000         0.000         1.000
+ NR_DEV         0.000         0.000         0.000         0.000         1.000
+ CALL_D_L       0.000         0.000         0.000         0.000         0.000
+ DAY_BEFO       0.000         0.000         0.000         0.000         0.000
+
+
+           ESTIMATED CORRELATION MATRIX FOR THE LATENT VARIABLES
+              CALL_D_L      DAY_BEFO
+              ________      ________
+ CALL_D_L       1.000
+ DAY_BEFO       0.023         1.000
+
+
+     ESTIMATES DERIVED FROM THE MODEL FOR BETWEEN
+
+
+           ESTIMATED MEANS FOR THE LATENT VARIABLES
+              F             F&1           TREND         STAB          LOGV
+              ________      ________      ________      ________      ________
+                0.000         0.000         0.004         0.257         0.386
+
+
+           ESTIMATED MEANS FOR THE LATENT VARIABLES
+              FEMALE        AGE           EDU_MED       EDU_HIGH      NR_DEV
+              ________      ________      ________      ________      ________
+                0.486        45.457         0.435         0.414         2.403
+
+
+           ESTIMATED MEANS FOR THE LATENT VARIABLES
+              CALL_D_L      DAY_BEFO
+              ________      ________
+               -0.423         0.000
+
+
+           ESTIMATED COVARIANCE MATRIX FOR THE LATENT VARIABLES
+              F             F&1           TREND         STAB          LOGV
+              ________      ________      ________      ________      ________
+ F              0.000
+ F&1            0.000         0.000
+ TREND          0.000         0.000         0.001
+ STAB           0.000         0.000         0.000         0.029
+ LOGV           0.000         0.000         0.000         0.000         0.231
+ FEMALE         0.000         0.000         0.000         0.000        -0.017
+ AGE            0.000         0.000         0.000         0.000         0.086
+ EDU_MED        0.000         0.000         0.000         0.000         0.005
+ EDU_HIGH       0.000         0.000         0.000         0.000         0.016
+ NR_DEV         0.000         0.000         0.000         0.000         0.001
+ CALL_D_L       0.000         0.000         0.013         0.047         0.000
+ DAY_BEFO       0.000         0.000         0.000         0.000         0.000
+
+
+           ESTIMATED COVARIANCE MATRIX FOR THE LATENT VARIABLES
+              FEMALE        AGE           EDU_MED       EDU_HIGH      NR_DEV
+              ________      ________      ________      ________      ________
+ FEMALE         0.255
+ AGE           -0.332       182.449
+ EDU_MED       -0.006         1.179         0.250
+ EDU_HIGH      -0.004        -1.646        -0.183         0.247
+ NR_DEV        -0.036         0.535        -0.016         0.036         0.379
+ CALL_D_L       0.000         0.000         0.000         0.000         0.000
+ DAY_BEFO       0.000         0.000         0.000         0.000         0.000
+
+
+           ESTIMATED COVARIANCE MATRIX FOR THE LATENT VARIABLES
+              CALL_D_L      DAY_BEFO
+              ________      ________
+ CALL_D_L       1.461
+ DAY_BEFO       0.000         0.000
+
+
+           ESTIMATED CORRELATION MATRIX FOR THE LATENT VARIABLES
+              F             F&1           TREND         STAB          LOGV
+              ________      ________      ________      ________      ________
+ F              1.000
+ F&1            0.000         1.000
+ TREND          0.000         0.000         1.000
+ STAB           0.000         0.000         0.043         1.000
+ LOGV           0.000         0.000         0.000         0.000         1.000
+ FEMALE         0.000         0.000         0.000         0.000        -0.071
+ AGE            0.000         0.000         0.000         0.000         0.013
+ EDU_MED        0.000         0.000         0.000         0.000         0.021
+ EDU_HIGH       0.000         0.000         0.000         0.000         0.068
+ NR_DEV         0.000         0.000         0.000         0.000         0.004
+ CALL_D_L       0.000         0.000         0.343         0.232         0.000
+ DAY_BEFO       0.000         0.000         0.000         0.000         0.000
+
+
+           ESTIMATED CORRELATION MATRIX FOR THE LATENT VARIABLES
+              FEMALE        AGE           EDU_MED       EDU_HIGH      NR_DEV
+              ________      ________      ________      ________      ________
+ FEMALE         1.000
+ AGE           -0.049         1.000
+ EDU_MED       -0.024         0.175         1.000
+ EDU_HIGH      -0.018        -0.245        -0.738         1.000
+ NR_DEV        -0.117         0.064        -0.053         0.116         1.000
+ CALL_D_L       0.000         0.000         0.000         0.000         0.000
+ DAY_BEFO       0.000         0.000         0.000         0.000         0.000
+
+
+           ESTIMATED CORRELATION MATRIX FOR THE LATENT VARIABLES
+              CALL_D_L      DAY_BEFO
+              ________      ________
+ CALL_D_L       1.000
+ DAY_BEFO       0.000         1.000
+
+
+TECHNICAL 8 OUTPUT
+
+
+   TECHNICAL 8 OUTPUT FOR BAYES ESTIMATION
+
+     PROCESSOR    BSEED
+     1            0
+     2            285380
+     3            253358
+     4            93468
+     5            608496
+     6            903420
+     7            195873
+     8            462953
+     9            939021
+     10           127215
+     11           415931
+     12           533738
+     13           107446
+     14           399671
+     15           650371
+     16           27071
+     17           76974
+     18           68985
+     19           851945
+     20           637345
+     21           573096
+     22           902278
+     23           887676
+     24           372176
+     25           347515
+     26           207896
+     27           569131
+     28           364676
+     29           392418
+     30           366706
+
+                     POTENTIAL       PARAMETER WITH
+     ITERATION    SCALE REDUCTION      HIGHEST PSR
+     100              1.239               24
+     200              1.287               3
+     300              1.123               41
+     400              1.148               23
+     500              1.027               41
+     600              1.120               8
+     700              1.263               8
+     800              1.406               3
+     900              1.623               3
+     1000             1.727               3
+     1100             1.881               3
+     1200             1.808               3
+     1300             2.042               3
+     1400             1.893               3
+     1500             1.667               3
+     1600             1.479               3
+     1700             1.296               3
+     1800             1.278               3
+     1900             1.202               3
+     2000             1.147               3
+     2100             1.134               3
+     2200             1.140               3
+     2300             1.143               3
+     2400             1.187               3
+     2500             1.266               3
+     2600             1.203               3
+     2700             1.171               3
+     2800             1.167               3
+     2900             1.157               3
+     3000             1.160               3
+     3100             1.128               3
+     3200             1.105               3
+     3300             1.058               3
+     3400             1.031               3
+     3500             1.024               6
+     3600             1.027               6
+     3700             1.027               6
+     3800             1.026               6
+     3900             1.026               6
+     4000             1.029               6
+     4100             1.029               5
+     4200             1.031               5
+     4300             1.032               5
+     4400             1.037               3
+     4500             1.049               3
+     4600             1.060               3
+     4700             1.051               3
+     4800             1.030               5
+     4900             1.031               5
+     5000             1.032               3
+     5100             1.032               5
+     5200             1.031               5
+     5300             1.032               6
+     5400             1.033               5
+     5500             1.034               3
+     5600             1.040               3
+     5700             1.035               6
+     5800             1.035               6
+     5900             1.036               5
+     6000             1.037               5
+     6100             1.037               5
+     6200             1.039               5
+     6300             1.039               5
+     6400             1.039               5
+     6500             1.040               5
+     6600             1.038               5
+     6700             1.040               5
+     6800             1.040               5
+     6900             1.040               5
+     7000             1.041               5
+     7100             1.039               5
+     7200             1.040               5
+     7300             1.040               5
+     7400             1.039               5
+     7500             1.037               5
+     7600             1.037               5
+     7700             1.036               5
+     7800             1.034               5
+     7900             1.033               5
+     8000             1.033               5
+     8100             1.032               5
+     8200             1.032               5
+     8300             1.031               5
+     8400             1.029               5
+     8500             1.029               5
+     8600             1.029               5
+     8700             1.029               5
+     8800             1.029               5
+     8900             1.028               5
+     9000             1.026               5
+     9100             1.025               5
+     9200             1.024               5
+     9300             1.026               3
+     9400             1.034               3
+     9500             1.047               3
+     9600             1.065               3
+     9700             1.080               3
+     9800             1.077               3
+     9900             1.064               3
+     10000            1.054               3
+
+
+     MCMC EFFECTIVE SAMPLE SIZE (ESS) IN ASCENDING ORDER
+        LOWEST 10 PARAMETERS
+        PARAMETER    ESS
+             1       <20
+             3        60
+             5        62
+             8       114
+            24       130
+             6       179
+            45       233
+             9       297
+            43       319
+            23       326
+
+
+PLOT INFORMATION
+
+The following plots are available:
+
+  Histograms (sample values)
+  Scatterplots (sample values)
+  Between-level histograms (sample values, sample means/variances)
+  Between-level scatterplots (sample values, sample means/variances)
+  Time series plots (sample values, ACF, PACF)
+  Histogram of subjects per time point
+  Time interval plots
+  Bayesian posterior parameter distributions
+  Bayesian posterior parameter trace plots
+  Bayesian autocorrelation plots
+
+     Beginning Time:  11:51:31
+        Ending Time:  14:59:15
+       Elapsed Time:  03:07:44
+
+
+
+MUTHEN & MUTHEN
+3463 Stoner Ave.
+Los Angeles, CA  90066
+
+Tel: (310) 391-9971
+Fax: (310) 391-8971
+Web: www.StatModel.com
+Support: Support@StatModel.com
+
+Copyright (c) 1998-2025 Muthen & Muthen

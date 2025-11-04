@@ -1,6 +1,6 @@
-Mplus VERSION 8.11 (Linux)
+Mplus VERSION 9 (Linux)
 MUTHEN & MUTHEN
-10/18/2025   5:21 AM
+10/31/2025   7:28 PM
 
 INPUT INSTRUCTIONS
 
@@ -21,6 +21,7 @@ INPUT INSTRUCTIONS
        sm_c_b time;
     MISSING = .;
     USEVARIABLES = sm_c_l2 day_before_w1;
+    WITHIN = day_before_w1;
     CLUSTER = new_id;
     TINTERVAL = time (1 time2);
 
@@ -28,8 +29,8 @@ INPUT INSTRUCTIONS
     TYPE = TWOLEVEL RANDOM;
     ESTIMATOR = BAYES;
     PROCESSORS = 30;
-    BITERATIONS = 20000 (5000);
-    THIN = 10;
+    BITERATIONS = 80000 (10000);
+    THIN = 20;
 
   MODEL:
 
@@ -39,6 +40,8 @@ INPUT INSTRUCTIONS
   stab | f ON f&1;
 
   logv | sm_c_l2;
+
+  day_before_w1;
 
   %BETWEEN%
   sm_c_l2 WITH stab trend;
@@ -68,21 +71,10 @@ INPUT INSTRUCTIONS
 *** WARNING in VARIABLE command
   Note that only the first 8 characters of variable names are used in the output.
   Shorten variable names to avoid any confusion.
-*** WARNING in MODEL command
-  A y-variable has been declared on the within level but not referred to on
-  the between level.  Please check that this is what is intended.  If this is not intended,
-  specify the variable as a within variable.  Problem with:  DAY_BEFORE_W1
 *** WARNING in PLOT command
   Note that only the first 8 characters of variable names are used in plots.
   If variable names are not unique within the first 8 characters, problems
   may occur.
-*** WARNING
-  Data set contains cases with missing on x-variables converted to dependent variables.
-  The autocorrelation of these variables should be included in the model and the variables
-  added to the LAGGED option.  The following converted x-variable(s) have cases with missing:
-
-      DAY_BEFORE_W1 (6697 cases with missing data)
-
 *** WARNING
   One or more individual-level variables have no variation within a
   cluster for the following clusters.
@@ -93,7 +85,7 @@ INPUT INSTRUCTIONS
                   1938 2085 296 1488 1589 46 2067 1100 2022 564 2036 1015 1023 57 1044 880 2059
                   813 1425 1992 1091 1259 1508 1704 1713 2019 1560 1050 2002
 
-   5 WARNING(S) FOUND IN THE INPUT INSTRUCTIONS
+   3 WARNING(S) FOUND IN THE INPUT INSTRUCTIONS
 
 
 
@@ -104,14 +96,17 @@ SUMMARY OF ANALYSIS
 Number of groups                                                 1
 Number of observations                                       25836
 
-Number of dependent variables                                    2
-Number of independent variables                                  0
+Number of dependent variables                                    1
+Number of independent variables                                  1
 Number of continuous latent variables                            5
 
 Observed dependent variables
 
   Continuous
-   SM_C_L2     DAY_BEFORE
+   SM_C_L2
+
+Observed independent variables
+   DAY_BEFO
 
 Continuous latent variables
    F           F&1         TREND       STAB        LOGV
@@ -119,6 +114,10 @@ Continuous latent variables
 Variables with special functions
 
   Cluster variable      NEW_ID
+
+  Within variables
+   DAY_BEFO
+
 
 Estimator                                                    BAYES
 Specifications for Bayesian Estimation
@@ -128,8 +127,8 @@ Specifications for Bayesian Estimation
   Starting value information                           UNPERTURBED
   Algorithm used for Markov chain Monte Carlo           GIBBS(PX1)
   Convergence criterion                                  0.500D-01
-  Maximum number of iterations                               20000
-  K-th iteration used for thinning                              10
+  Maximum number of iterations                               80000
+  K-th iteration used for thinning                              20
 
 Input data file(s)
   data_full_sm_c_l2.dat
@@ -295,18 +294,18 @@ UNIVARIATE SAMPLE STATISTICS
           692 1692 1057 999 558 1453 1668 1481 1940 1360 52 653 2216 896 1919 643 1821 1175 793 1008
           605 73 1581 1643 63 484 908 725 1004 2147 6 1847 1213 983 97 1708 1115 868 482 1502 616 2093
           1024 1418 1928 965 703 515 609 2212 2073 74 1806 1514 2015 1118 79 1064 1601 1817 2119 2099
-          1624 2199 2111 2137 1625 1879 822 874 1839 2081 1023 541 1445 471 1703 1432 35 895 717 639
-          2069 745 924 743 1591 940 1686 853 1614 9 13 1013 1080 1720 1191 2030 943 2118 60 2219 2132
-          739 1610 1350 2208 1778 732 784 1891 1248 2026 1207 894 57 1254 1315 858 1314 85 645 1873 1768
-          1576 2038 11 1859 2014 1410 1835 1612 2064 2165 646 1951 1086 86 1727 1041 1608 1627 1623 1554
-          1863 1291 1030 1473 1673 946 1334 518 1429 1113 1542 674 2141 1214 1734 1077 618 1044 1849
-          1075 103 2191 1509 1568 18 92 821 557 675 906 1813 1882 1412 1981 36 1472 1604 1477 44 2056
-          1972 669 1497 889 1759 1348 1745 1033 2159 1850 1460 880 599 2059 2135 837 813 1917 1466 1953
-          1570 2082 2070 556 1697 680 712 1870 72 1790 910 25 986 1957 504 786 733 1465 1840 506 1963
-          1365 1674 1528 1786 1629 1875 746 1715 544 1562 977 1425 1979 1181 2138 684 19 1803 1632 1992
-          1397 871 720 1611 1171 603 1264 994 1437 1330 1573 959 559 1851 909 582 1695 1091 2065 1121
-          1924 2088 508 2117 555 753 1930 77 1696 1785 1923 2075 1801 59 726 1777 561 1687 953 29 37
-          686 859 1809 1956 927 827 2150 475 735 1232 1423 1947 1822 665 2131 1943 1305 995 1259 929
+          1624 2199 2111 2137 1625 1879 822 874 1839 2081 1023 541 1445 471 1703 1432 35 895 1110 717
+          639 2069 745 924 743 1591 940 1686 853 1614 9 13 1013 1080 1720 1191 2030 943 2118 60 2219
+          2132 739 1610 1350 2208 1778 732 784 1891 1248 2026 1207 894 57 1254 1315 858 1314 85 645 1873
+          1768 1576 2038 11 1859 2014 1410 1835 1612 2064 2165 646 1951 1086 86 1727 1041 1608 1627 1623
+          1554 1863 1291 1030 1473 1673 946 1334 518 1429 1113 1542 674 2141 1214 1734 1077 618 1044
+          1849 1075 103 2191 1509 1568 18 92 821 557 675 906 1813 1882 1412 1981 36 1472 1604 1477 44
+          2056 1972 669 1497 889 1759 1348 1745 1033 2159 1850 1460 880 599 2059 2135 837 813 1917 1466
+          1953 1570 2082 2070 556 1697 680 712 1870 72 1790 910 25 986 1957 504 786 733 1465 1840 506
+          1963 1365 1674 1528 1786 1629 1875 746 1715 544 1562 977 1425 1979 1181 2138 684 19 1803 1632
+          1992 1397 871 720 1611 1171 603 1264 994 1437 1330 1573 959 559 1851 909 582 1695 1091 2065
+          1121 1924 2088 508 2117 555 753 1930 77 1696 1785 1923 2075 1801 59 726 1777 561 1687 953 29
+          37 686 859 1809 1956 927 827 2150 475 735 1232 1423 1947 1822 665 2131 1943 1305 995 1259 929
           2016 807 2182 2127 1493 682 998 69 1999 1035 1793 2101 1731 1774 1454 1946 1754 1757 600 1967
           1984 1250 2213 2187 1451 1532 1480 1508 1918 947 1461 1147 2136 105 1595 956 763 1504 1163
           474 1070 642 1701 523 1572 1263 782 1225 1137 1895 1704 1713 470 2154 1172 100 1784 2076 1067
@@ -327,12 +326,12 @@ THE MODEL ESTIMATION TERMINATED NORMALLY
 
 MODEL FIT INFORMATION
 
-Number of Free Parameters                              15
+Number of Free Parameters                              14
 
 Information Criteria
 
-          Deviance (DIC)                       115729.177
-          Estimated Number of Parameters (pD)   -3226.739
+          Deviance (DIC)                       116100.432
+          Estimated Number of Parameters (pD)   -2828.946
 
 
 
@@ -346,40 +345,41 @@ Within Level
  F        BY
     SM_C_L2            1.000       0.000      0.000       1.000       1.000
 
+ Means
+    DAY_BEFORE       -14.688       0.061      0.000     -14.805     -14.567      *
+
  Variances
-    DAY_BEFORE        71.833       0.746      0.000      70.401      73.293      *
+    DAY_BEFORE        71.860       0.730      0.000      70.452      73.315      *
 
  Residual Variances
-    F                  0.071       0.010      0.000       0.054       0.092      *
+    F                  0.073       0.010      0.000       0.055       0.093      *
 
 Between Level
 
  SM_C_L2  WITH
-    STAB               0.035       0.024      0.075      -0.013       0.081
-    TREND              0.000       0.001      0.386      -0.003       0.002
+    STAB               0.039       0.026      0.067      -0.010       0.092
+    TREND              0.007       0.002      0.000       0.004       0.010      *
 
  STAB     WITH
-    TREND              0.000       0.000      0.495      -0.001       0.001
+    TREND              0.000       0.000      0.317      -0.001       0.001
 
  Means
-    SM_C_L2            1.738       0.037      0.000       1.668       1.810      *
-    DAY_BEFORE       -14.677       0.061      0.000     -14.806     -14.575      *
-    TREND              0.001       0.001      0.344      -0.002       0.003
-    STAB               0.509       0.050      0.000       0.412       0.615      *
-    LOGV              -1.117       0.051      0.000      -1.222      -1.024      *
+    SM_C_L2            1.764       0.040      0.000       1.687       1.842      *
+    TREND              0.002       0.001      0.081      -0.001       0.005
+    STAB               0.503       0.050      0.000       0.408       0.603      *
+    LOGV              -1.124       0.050      0.000      -1.225      -1.032      *
 
  Variances
-    SM_C_L2            1.086       0.056      0.000       0.982       1.204      *
-    DAY_BEFORE         0.015       0.024      0.000       0.001       0.085      *
+    SM_C_L2            1.139       0.066      0.000       1.014       1.272      *
     TREND              0.001       0.000      0.000       0.001       0.001      *
-    STAB               0.034       0.010      0.000       0.018       0.057      *
-    LOGV               0.642       0.060      0.000       0.541       0.775      *
+    STAB               0.037       0.011      0.000       0.018       0.059      *
+    LOGV               0.651       0.060      0.000       0.547       0.782      *
 
 New/Additional Parameters
-    MEDV               0.327       0.017      0.000       0.295       0.359      *
-    MEANV              0.451       0.020      0.000       0.413       0.493      *
-    25QV               0.191       0.013      0.000       0.166       0.215      *
-    75QV               0.562       0.025      0.000       0.514       0.612      *
+    MEDV               0.325       0.016      0.000       0.294       0.356      *
+    MEANV              0.450       0.020      0.000       0.413       0.493      *
+    25QV               0.189       0.012      0.000       0.164       0.212      *
+    75QV               0.560       0.025      0.000       0.514       0.612      *
 
 
 STANDARDIZED MODEL RESULTS
@@ -393,42 +393,43 @@ STDYX Standardization
 Within-Level Standardized Estimates Averaged Over Clusters
 
  F        BY
-    SM_C_L2            0.481       0.023      0.000       0.436       0.524      *
+    SM_C_L2            0.482       0.023      0.000       0.435       0.524      *
 
  STAB | F ON
-    F&1                0.495       0.046      0.000       0.406       0.583      *
+    F&1                0.500       0.050      0.000       0.412       0.607      *
 
  TREND | SM_C_L2 ON
-    DAY_BEFORE         0.007       0.012      0.274      -0.016       0.030
+    DAY_BEFORE         0.021       0.012      0.036      -0.002       0.044
 
  LOGV |
-    SM_C_L2            0.659       0.023      0.000       0.613       0.702      *
+    SM_C_L2            0.658       0.023      0.000       0.615       0.702      *
+
+ Means
+    DAY_BEFORE        -1.733       0.012      0.000      -1.756      -1.711      *
 
  Variances
     DAY_BEFORE         1.000       0.000      0.000       1.000       1.000
 
  Residual Variances
-    F                  0.719       0.038      0.000       0.634       0.783      *
+    F                  0.713       0.043      0.000       0.610       0.777      *
 
 Between Level
 
  SM_C_L2  WITH
-    STAB               0.183       0.120      0.075      -0.068       0.404
-    TREND             -0.015       0.051      0.386      -0.112       0.083
+    STAB               0.192       0.121      0.067      -0.055       0.414
+    TREND              0.233       0.049      0.000       0.135       0.326      *
 
  STAB     WITH
-    TREND              0.001       0.071      0.495      -0.138       0.139
+    TREND              0.036       0.076      0.317      -0.113       0.183
 
  Means
-    SM_C_L2            1.667       0.057      0.000       1.561       1.781      *
-    DAY_BEFORE      -118.203      90.136      0.000    -408.885     -50.378      *
-    TREND              0.021       0.052      0.344      -0.081       0.125
-    STAB               2.743       0.696      0.000       1.778       4.551      *
-    LOGV              -1.394       0.065      0.000      -1.525      -1.272      *
+    SM_C_L2            1.654       0.062      0.000       1.534       1.778      *
+    TREND              0.073       0.053      0.081      -0.028       0.177
+    STAB               2.622       0.682      0.000       1.722       4.372      *
+    LOGV              -1.393       0.065      0.000      -1.522      -1.267      *
 
  Variances
     SM_C_L2            1.000       0.000      0.000       1.000       1.000
-    DAY_BEFORE         1.000       0.000      0.000       1.000       1.000
     TREND              1.000       0.000      0.000       1.000       1.000
     STAB               1.000       0.000      0.000       1.000       1.000
     LOGV               1.000       0.000      0.000       1.000       1.000
@@ -441,12 +442,12 @@ Within-Level R-Square Averaged Across Clusters
                                 Posterior  One-Tailed         95% C.I.
     Variable        Estimate       S.D.      P-Value   Lower 2.5%  Upper 2.5%
 
-    SM_C_L2            0.341       0.023      0.000       0.297       0.386
+    SM_C_L2            0.342       0.023      0.000       0.298       0.385
 
                                 Posterior  One-Tailed         95% C.I.
     Variable        Estimate       S.D.      P-Value   Lower 2.5%  Upper 2.5%
 
-    F                  0.281       0.038      0.000       0.216       0.365
+    F                  0.287       0.043      0.000       0.223       0.389
 
 
 RESIDUAL OUTPUT
@@ -461,21 +462,21 @@ RESIDUAL OUTPUT
            Means
               SM_C_L2       DAY_BEFO
               ________      ________
-                1.737       -14.686
+                1.735       -14.688
 
 
            Covariances
               SM_C_L2       DAY_BEFO
               ________      ________
- SM_C_L2        0.649
- DAY_BEFO       0.042        71.850
+ SM_C_L2        0.674
+ DAY_BEFO       0.141        71.868
 
 
            Correlations
               SM_C_L2       DAY_BEFO
               ________      ________
  SM_C_L2        1.000
- DAY_BEFO       0.007         1.000
+ DAY_BEFO       0.022         1.000
 
 
      BETWEEN LEVEL
@@ -484,14 +485,14 @@ RESIDUAL OUTPUT
            Means
               SM_C_L2       DAY_BEFO
               ________      ________
-                1.738       -14.677
+                1.764         0.000
 
 
            Covariances
               SM_C_L2       DAY_BEFO
               ________      ________
- SM_C_L2        1.086
- DAY_BEFO       0.000         0.015
+ SM_C_L2        1.139
+ DAY_BEFO       0.000         0.000
 
 
            Correlations
@@ -530,7 +531,7 @@ TECHNICAL 1 OUTPUT
            ALPHA
               F             F&1           SM_C_L2       DAY_BEFO
               ________      ________      ________      ________
-                    0             0             0             0
+                    0             0             0             1
 
 
            BETA
@@ -545,59 +546,55 @@ TECHNICAL 1 OUTPUT
            PSI
               F             F&1           SM_C_L2       DAY_BEFO
               ________      ________      ________      ________
- F                  1
+ F                  2
  F&1                0             0
  SM_C_L2            0             0             0
- DAY_BEFO           0             0             0             2
+ DAY_BEFO           0             0             0             3
 
 
      PARAMETER SPECIFICATION FOR BETWEEN
 
 
            NU
-              SM_C_L2       DAY_BEFO
-              ________      ________
-                    0             0
+              SM_C_L2
+              ________
+                    0
 
 
            LAMBDA
-              TREND         STAB          LOGV          SM_C_L2       DAY_BEFO
-              ________      ________      ________      ________      ________
- SM_C_L2            0             0             0             0             0
- DAY_BEFO           0             0             0             0             0
+              TREND         STAB          LOGV          SM_C_L2
+              ________      ________      ________      ________
+ SM_C_L2            0             0             0             0
 
 
            THETA
-              SM_C_L2       DAY_BEFO
-              ________      ________
+              SM_C_L2
+              ________
  SM_C_L2            0
- DAY_BEFO           0             0
 
 
            ALPHA
-              TREND         STAB          LOGV          SM_C_L2       DAY_BEFO
-              ________      ________      ________      ________      ________
-                    3             4             5             6             7
+              TREND         STAB          LOGV          SM_C_L2
+              ________      ________      ________      ________
+                    4             5             6             7
 
 
            BETA
-              TREND         STAB          LOGV          SM_C_L2       DAY_BEFO
-              ________      ________      ________      ________      ________
- TREND              0             0             0             0             0
- STAB               0             0             0             0             0
- LOGV               0             0             0             0             0
- SM_C_L2            0             0             0             0             0
- DAY_BEFO           0             0             0             0             0
+              TREND         STAB          LOGV          SM_C_L2
+              ________      ________      ________      ________
+ TREND              0             0             0             0
+ STAB               0             0             0             0
+ LOGV               0             0             0             0
+ SM_C_L2            0             0             0             0
 
 
            PSI
-              TREND         STAB          LOGV          SM_C_L2       DAY_BEFO
-              ________      ________      ________      ________      ________
+              TREND         STAB          LOGV          SM_C_L2
+              ________      ________      ________      ________
  TREND              8
  STAB               9            10
  LOGV               0             0            11
  SM_C_L2           12            13             0            14
- DAY_BEFO           0             0             0             0            15
 
 
      PARAMETER SPECIFICATION FOR THE ADDITIONAL PARAMETERS
@@ -606,7 +603,7 @@ TECHNICAL 1 OUTPUT
            NEW/ADDITIONAL PARAMETERS
               MEDV          MEANV         25QV          75QV
               ________      ________      ________      ________
-                   16            17            18            19
+                   15            16            17            18
 
 
      STARTING VALUES FOR WITHIN
@@ -635,7 +632,7 @@ TECHNICAL 1 OUTPUT
            ALPHA
               F             F&1           SM_C_L2       DAY_BEFO
               ________      ________      ________      ________
-                0.000         0.000         0.000         0.000
+                0.000         0.000         0.000       -14.688
 
 
            BETA
@@ -660,49 +657,45 @@ TECHNICAL 1 OUTPUT
 
 
            NU
-              SM_C_L2       DAY_BEFO
-              ________      ________
-                0.000         0.000
+              SM_C_L2
+              ________
+                0.000
 
 
            LAMBDA
-              TREND         STAB          LOGV          SM_C_L2       DAY_BEFO
-              ________      ________      ________      ________      ________
- SM_C_L2        0.000         0.000         0.000         1.000         0.000
- DAY_BEFO       0.000         0.000         0.000         0.000         1.000
+              TREND         STAB          LOGV          SM_C_L2
+              ________      ________      ________      ________
+ SM_C_L2        0.000         0.000         0.000         1.000
 
 
            THETA
-              SM_C_L2       DAY_BEFO
-              ________      ________
+              SM_C_L2
+              ________
  SM_C_L2        0.000
- DAY_BEFO       0.000         0.000
 
 
            ALPHA
-              TREND         STAB          LOGV          SM_C_L2       DAY_BEFO
-              ________      ________      ________      ________      ________
-                0.000         0.000         0.000         2.084       -14.688
+              TREND         STAB          LOGV          SM_C_L2
+              ________      ________      ________      ________
+                0.000         0.000         0.000         2.084
 
 
            BETA
-              TREND         STAB          LOGV          SM_C_L2       DAY_BEFO
-              ________      ________      ________      ________      ________
- TREND          0.000         0.000         0.000         0.000         0.000
- STAB           0.000         0.000         0.000         0.000         0.000
- LOGV           0.000         0.000         0.000         0.000         0.000
- SM_C_L2        0.000         0.000         0.000         0.000         0.000
- DAY_BEFO       0.000         0.000         0.000         0.000         0.000
+              TREND         STAB          LOGV          SM_C_L2
+              ________      ________      ________      ________
+ TREND          0.000         0.000         0.000         0.000
+ STAB           0.000         0.000         0.000         0.000
+ LOGV           0.000         0.000         0.000         0.000
+ SM_C_L2        0.000         0.000         0.000         0.000
 
 
            PSI
-              TREND         STAB          LOGV          SM_C_L2       DAY_BEFO
-              ________      ________      ________      ________      ________
+              TREND         STAB          LOGV          SM_C_L2
+              ________      ________      ________      ________
  TREND          1.000
  STAB           0.000         1.000
  LOGV           0.000         0.000         1.000
  SM_C_L2        0.000         0.000         0.000         0.765
- DAY_BEFO       0.000         0.000         0.000         0.000        35.925
 
 
      STARTING VALUES FOR THE ADDITIONAL PARAMETERS
@@ -717,9 +710,9 @@ TECHNICAL 1 OUTPUT
 
      PRIORS FOR ALL PARAMETERS            PRIOR MEAN      PRIOR VARIANCE     PRIOR STD. DEV.
 
-     Parameter 1~IG(-1.000,0.000)          infinity            infinity            infinity
+     Parameter 1~N(0.000,infinity)           0.0000            infinity            infinity
      Parameter 2~IG(-1.000,0.000)          infinity            infinity            infinity
-     Parameter 3~N(0.000,infinity)           0.0000            infinity            infinity
+     Parameter 3~IG(-1.000,0.000)          infinity            infinity            infinity
      Parameter 4~N(0.000,infinity)           0.0000            infinity            infinity
      Parameter 5~N(0.000,infinity)           0.0000            infinity            infinity
      Parameter 6~N(0.000,infinity)           0.0000            infinity            infinity
@@ -731,7 +724,6 @@ TECHNICAL 1 OUTPUT
      Parameter 12~IW(0.000,-4)             infinity            infinity            infinity
      Parameter 13~IW(0.000,-4)             infinity            infinity            infinity
      Parameter 14~IW(0.000,-4)             infinity            infinity            infinity
-     Parameter 15~IG(-1.000,0.000)         infinity            infinity            infinity
 
 
 TECHNICAL 4 OUTPUT
@@ -743,43 +735,43 @@ TECHNICAL 4 OUTPUT
            ESTIMATED MEANS FOR THE LATENT VARIABLES
               F             F&1           TREND         STAB          LOGV
               ________      ________      ________      ________      ________
-                0.000         0.000         0.001         0.503        -1.123
+                0.000         0.000         0.002         0.504        -1.124
 
 
            ESTIMATED MEANS FOR THE LATENT VARIABLES
               SM_C_L2       DAY_BEFO
               ________      ________
-                1.737       -14.686
+                1.735       -14.688
 
 
            ESTIMATED COVARIANCE MATRIX FOR THE LATENT VARIABLES
               F             F&1           TREND         STAB          LOGV
               ________      ________      ________      ________      ________
- F              0.155
- F&1            0.105         0.155
+ F              0.180
+ F&1            0.130         0.180
  TREND          0.000         0.000         0.000
  STAB           0.000         0.000         0.000         0.000
  LOGV           0.000         0.000         0.000         0.000         0.000
- SM_C_L2        0.155         0.105         0.000         0.000         0.000
+ SM_C_L2        0.180         0.130         0.000         0.000         0.000
  DAY_BEFO       0.000         0.000         0.000         0.000         0.000
 
 
            ESTIMATED COVARIANCE MATRIX FOR THE LATENT VARIABLES
               SM_C_L2       DAY_BEFO
               ________      ________
- SM_C_L2        0.649
- DAY_BEFO       0.042        71.850
+ SM_C_L2        0.674
+ DAY_BEFO       0.141        71.868
 
 
            ESTIMATED CORRELATION MATRIX FOR THE LATENT VARIABLES
               F             F&1           TREND         STAB          LOGV
               ________      ________      ________      ________      ________
  F              1.000
- F&1            0.620         1.000
+ F&1            0.629         1.000
  TREND          0.000         0.000         1.000
  STAB           0.000         0.000         0.000         1.000
  LOGV           0.000         0.000         0.000         0.000         1.000
- SM_C_L2        0.497         0.312         0.000         0.000         0.000
+ SM_C_L2        0.502         0.321         0.000         0.000         0.000
  DAY_BEFO       0.000         0.000         0.000         0.000         0.000
 
 
@@ -787,7 +779,7 @@ TECHNICAL 4 OUTPUT
               SM_C_L2       DAY_BEFO
               ________      ________
  SM_C_L2        1.000
- DAY_BEFO       0.007         1.000
+ DAY_BEFO       0.022         1.000
 
 
      ESTIMATES DERIVED FROM THE MODEL FOR BETWEEN
@@ -796,13 +788,13 @@ TECHNICAL 4 OUTPUT
            ESTIMATED MEANS FOR THE LATENT VARIABLES
               F             F&1           TREND         STAB          LOGV
               ________      ________      ________      ________      ________
-                0.000         0.000         0.001         0.509        -1.117
+                0.000         0.000         0.002         0.503        -1.124
 
 
            ESTIMATED MEANS FOR THE LATENT VARIABLES
               SM_C_L2       DAY_BEFO
               ________      ________
-                1.738       -14.677
+                1.764         0.000
 
 
            ESTIMATED COVARIANCE MATRIX FOR THE LATENT VARIABLES
@@ -811,17 +803,17 @@ TECHNICAL 4 OUTPUT
  F              0.000
  F&1            0.000         0.000
  TREND          0.000         0.000         0.001
- STAB           0.000         0.000         0.000         0.034
- LOGV           0.000         0.000         0.000         0.000         0.642
- SM_C_L2        0.000         0.000         0.000         0.035         0.000
+ STAB           0.000         0.000         0.000         0.037
+ LOGV           0.000         0.000         0.000         0.000         0.651
+ SM_C_L2        0.000         0.000         0.007         0.039         0.000
  DAY_BEFO       0.000         0.000         0.000         0.000         0.000
 
 
            ESTIMATED COVARIANCE MATRIX FOR THE LATENT VARIABLES
               SM_C_L2       DAY_BEFO
               ________      ________
- SM_C_L2        1.086
- DAY_BEFO       0.000         0.015
+ SM_C_L2        1.139
+ DAY_BEFO       0.000         0.000
 
 
            ESTIMATED CORRELATION MATRIX FOR THE LATENT VARIABLES
@@ -830,9 +822,9 @@ TECHNICAL 4 OUTPUT
  F              1.000
  F&1            0.000         1.000
  TREND          0.000         0.000         1.000
- STAB           0.000         0.000         0.001         1.000
+ STAB           0.000         0.000         0.035         1.000
  LOGV           0.000         0.000         0.000         0.000         1.000
- SM_C_L2        0.000         0.000        -0.015         0.183         0.000
+ SM_C_L2        0.000         0.000         0.233         0.190         0.000
  DAY_BEFO       0.000         0.000         0.000         0.000         0.000
 
 
@@ -882,56 +874,121 @@ TECHNICAL 8 OUTPUT
 
                      POTENTIAL       PARAMETER WITH
      ITERATION    SCALE REDUCTION      HIGHEST PSR
-     100              2.112               15
-     200              2.316               4
-     300              1.146               13
-     400              1.410               1
-     500              1.101               13
-     600              1.091               13
-     700              1.114               13
-     800              1.064               7
-     900              1.174               10
-     1000             1.237               4
-     1100             1.348               15
-     1200             1.321               15
-     1300             1.265               15
-     1400             1.169               15
-     1500             1.165               15
-     1600             1.185               15
-     1700             1.154               15
-     1800             1.127               15
-     1900             1.086               15
-     2000             1.048               15
-     2100             1.036               15
-     2200             1.025               15
-     2300             1.014               11
-     2400             1.021               15
-     2500             1.049               15
-     2600             1.047               15
-     2700             1.086               15
-     2800             1.084               15
-     2900             1.046               15
-     3000             1.040               15
-     3100             1.029               15
-     3200             1.036               1
-     3300             1.041               15
-     3400             1.037               15
-     3500             1.021               15
-     3600             1.019               1
-     3700             1.032               1
-     3800             1.029               1
-     3900             1.020               1
-     4000             1.022               15
-     4100             1.017               15
-     4200             1.020               4
-     4300             1.024               4
-     4400             1.024               4
-     4500             1.030               1
-     4600             1.024               15
-     4700             1.020               15
-     4800             1.007               15
-     4900             1.010               10
-     5000             1.007               10
+     100              1.134               2
+     200              1.360               13
+     300              1.284               5
+     400              1.234               5
+     500              1.031               13
+     600              1.040               2
+     700              1.140               2
+     800              1.083               2
+     900              1.155               2
+     1000             1.148               2
+     1100             1.164               2
+     1200             1.105               2
+     1300             1.089               2
+     1400             1.043               2
+     1500             1.042               2
+     1600             1.035               2
+     1700             1.005               6
+     1800             1.008               13
+     1900             1.006               6
+     2000             1.006               6
+     2100             1.004               6
+     2200             1.004               6
+     2300             1.006               6
+     2400             1.016               2
+     2500             1.013               2
+     2600             1.018               2
+     2700             1.017               2
+     2800             1.017               2
+     2900             1.010               5
+     3000             1.002               5
+     3100             1.004               5
+     3200             1.002               10
+     3300             1.001               2
+     3400             1.002               2
+     3500             1.003               2
+     3600             1.002               13
+     3700             1.003               13
+     3800             1.007               13
+     3900             1.012               10
+     4000             1.012               10
+     4100             1.008               10
+     4200             1.009               10
+     4300             1.005               10
+     4400             1.001               13
+     4500             1.003               11
+     4600             1.007               11
+     4700             1.011               2
+     4800             1.009               2
+     4900             1.015               2
+     5000             1.017               2
+     5100             1.016               2
+     5200             1.015               2
+     5300             1.011               2
+     5400             1.010               2
+     5500             1.006               2
+     5600             1.008               2
+     5700             1.007               2
+     5800             1.005               5
+     5900             1.004               5
+     6000             1.003               5
+     6100             1.005               5
+     6200             1.004               5
+     6300             1.002               5
+     6400             1.003               2
+     6500             1.005               2
+     6600             1.004               2
+     6700             1.003               2
+     6800             1.005               2
+     6900             1.004               2
+     7000             1.004               2
+     7100             1.003               2
+     7200             1.005               2
+     7300             1.005               2
+     7400             1.005               2
+     7500             1.004               2
+     7600             1.001               2
+     7700             1.001               2
+     7800             1.001               10
+     7900             1.001               10
+     8000             1.002               10
+     8100             1.002               10
+     8200             1.004               10
+     8300             1.003               10
+     8400             1.004               10
+     8500             1.005               2
+     8600             1.003               10
+     8700             1.001               11
+     8800             1.001               11
+     8900             1.001               11
+     9000             1.001               11
+     9100             1.003               11
+     9200             1.004               2
+     9300             1.007               2
+     9400             1.008               2
+     9500             1.007               2
+     9600             1.006               2
+     9700             1.008               2
+     9800             1.008               2
+     9900             1.009               2
+     10000            1.008               2
+
+
+     MCMC EFFECTIVE SAMPLE SIZE (ESS) IN ASCENDING ORDER
+        LOWEST 10 PARAMETERS
+        PARAMETER    ESS
+             2       189
+            17       275
+             5       278
+            10       287
+             6       323
+            15       324
+            11       445
+            18       752
+            13       957
+            16      1106
 
 
 PLOT INFORMATION
@@ -949,9 +1006,9 @@ The following plots are available:
   Bayesian posterior parameter trace plots
   Bayesian autocorrelation plots
 
-     Beginning Time:  05:21:23
-        Ending Time:  06:19:06
-       Elapsed Time:  00:57:43
+     Beginning Time:  19:28:02
+        Ending Time:  21:39:54
+       Elapsed Time:  02:11:52
 
 
 
@@ -964,4 +1021,4 @@ Fax: (310) 391-8971
 Web: www.StatModel.com
 Support: Support@StatModel.com
 
-Copyright (c) 1998-2024 Muthen & Muthen
+Copyright (c) 1998-2025 Muthen & Muthen

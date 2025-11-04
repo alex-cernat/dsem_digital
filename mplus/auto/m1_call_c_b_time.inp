@@ -16,6 +16,7 @@ VARIABLE:
   MISSING = .;
   USEVARIABLES = call_c_b day_before_w1;
   CATEGORICAL = call_c_b;
+  WITHIN = day_before_w1;
   CLUSTER = new_id;
   TINTERVAL = time (1 time2);
 
@@ -23,14 +24,16 @@ ANALYSIS:
   TYPE = TWOLEVEL RANDOM;
   ESTIMATOR = BAYES;
   PROCESSORS = 30;
-  BITERATIONS = 70000 (5000);
-  THIN = 10;
+  BITERATIONS = 80000 (10000);
+  THIN = 20;
 
 MODEL:
   %WITHIN%
     f BY call_c_b@1(&1);
     trend | call_c_b ON day_before_w1;
     stab | f ON f&1;
+
+day_before_w1;
 
   %BETWEEN%
     call_c_b WITH stab trend;

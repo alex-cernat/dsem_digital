@@ -44,7 +44,7 @@ MODEL:
     trend | [[varNames#var]] ON day_before_w1;
     stab | f ON f&1;
 
-daybefore;
+day_before_w1;
 
   %BETWEEN%
     [[varNames#var]] WITH stab trend;

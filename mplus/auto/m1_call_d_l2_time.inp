@@ -15,6 +15,7 @@ NAMES = new_id age female edu edu_low edu_med edu_high nr_dev w1_inet w1_sp w1_p
      sm_c_b time; 
   MISSING = .;
   USEVARIABLES = call_d_l2 day_before_w1;
+  WITHIN = day_before_w1;
   CLUSTER = new_id;
   TINTERVAL = time (1 time2);
 
@@ -22,8 +23,8 @@ ANALYSIS:
   TYPE = TWOLEVEL RANDOM;
   ESTIMATOR = BAYES;
   PROCESSORS = 30;
-  BITERATIONS = 70000 (5000);
-  THIN = 10;
+  BITERATIONS = 80000 (10000);
+  THIN = 20;
 
 MODEL:
 
@@ -33,6 +34,8 @@ trend | call_d_l2 ON day_before_w1;
 stab | f ON f&1;
 
 logv | call_d_l2;
+
+day_before_w1;
 
 %BETWEEN%
 call_d_l2 WITH stab trend;
