@@ -267,13 +267,13 @@ out_retry <- path_retry %>%
 
 
 
-issues_retry <- tibble(
-  path = path_retry,
-  conv_issue = map_lgl(out_retry, function(x) x$tech8$psr%>% 
-                         slice_tail(n = 1) %>% 
-                         .[["psr"]] > 1.099
-  )
-)
+# issues_retry <- tibble(
+#   path = path_retry,
+#   conv_issue = map_lgl(out_retry, function(x) x$tech8$psr%>% 
+#                          slice_tail(n = 1) %>% 
+#                          .[["psr"]] > 1.099
+#   )
+# )
 
 
 count(issues_retry, conv_issue)
@@ -282,6 +282,14 @@ issues_retry %>%
   filter(conv_issue) %>% 
   pull(path)
 
+
+
+
+issues_retry %>% 
+  filter(conv_issue) %>% 
+  pull(path) %>%
+  str_replace("out", "inp") %>%
+  map(MplusAutomation::runModels, logFile = "./mplus/auto/retry/log_retry.txt")
 
 
 
