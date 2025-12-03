@@ -100,9 +100,13 @@ createModels("./mplus/auto/m2_template_cont_time.txt")
 
 
 # Run models ------------------------------------------
-runModels("./mplus/auto/", 
-          logFile = "./mplus/auto/log.txt", 
-          showOutput = T)
+
+models_to_run <- list.files("./mplus/auto/retry", pattern = "inp$", full.names = T)
+
+models_to_run[-(1:7)] %>% 
+  map(runModels, 
+      logFile = "./mplus/auto/log.txt", 
+      showOutput = T)
 
 
 # Explore data with few used cases ------------------------------------------

@@ -1,50 +1,7 @@
-------Begin Mplus Model Run: 28Oct2025 08:04:02------
+------Begin Mplus Model Run: 27Nov2025 16:54:02------
 Run options:
 	Recursive (run models in subdirectories): FALSE
 	Show output on console: TRUE
 	Replace existing outfile: always
 ------
-Currently running model: m0_desc.inp
-Currently running model: m0.inp
-Currently running model: m1_call_c_b_time.inp
-Currently running model: m1_call_c_b.inp
-Currently running model: m1_call_c_l2_time.inp
-Currently running model: m1_call_c_l2.inp
-Currently running model: m1_call_d_l2_time.inp
-Currently running model: m1_call_d_l2.inp
-Currently running model: m1_msg_c_b_time.inp
-Currently running model: m1_msg_c_b.inp
-Currently running model: m1_msg_c_l2_time.inp
-Currently running model: m1_msg_c_l2.inp
-Currently running model: m1_msg_d_l2_time.inp
-Currently running model: m1_msg_d_l2.inp
-Currently running model: m1_phot_c_b_time.inp
-Currently running model: m1_phot_c_b.inp
-Currently running model: m1_phot_c_l2_time.inp
-Currently running model: m1_phot_c_l2.inp
-Currently running model: m1_phot_d_l2_time.inp
-Currently running model: m1_phot_d_l2.inp
-Currently running model: m1_sm_c_b_time.inp
-Currently running model: m1_sm_c_b.inp
-Currently running model: m1_sm_c_l2_time.inp
-Currently running model: m1_sm_c_l2.inp
-Currently running model: m1_sm_d_l2_time.inp
-Currently running model: m1_sm_d_l2.inp
-Currently running model: m1_web_c_b_time.inp
-Currently running model: m1_web_c_b.inp
-Currently running model: m1_web_c_l2_time.inp
-Currently running model: m1_web_c_l2.inp
-Currently running model: m1_web_d_l2_time.inp
-Currently running model: m1_web_d_l2.inp
-Currently running model: m2_call_c_l2_time.inp
-Currently running model: m2_call_d_l2_time.inp
-Currently running model: m2_msg_c_l2_time.inp
-Currently running model: m2_msg_d_l2_time.inp
-Currently running model: m2_phot_c_l2_time.inp
-Currently running model: m2_phot_d_l2_time.inp
-Currently running model: m2_sm_c_l2_time.inp
-Currently running model: m2_sm_d_l2_time.inp
-Currently running model: m2_web_c_l2_time.inp
 Currently running model: m2_web_d_l2_time.inp
-
-------End Mplus Model Run: 03Nov2025 20:38:13------
