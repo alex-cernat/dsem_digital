@@ -389,6 +389,11 @@ trend_effects <- out_m1[issues$conv_issue == FALSE &
 trend_effects %>% 
   filter(pval < 0.05)
 
+# paramHeader   est  pval lower_2.5ci upper_2.5ci     param
+# 1 trend|call_c_l2.on 0.027 0.019       0.001       0.053 call_c_l2
+# 2   trend|sm_c_l2.on 0.021 0.036      -0.002       0.044   sm_c_l2
+# 3   trend|sm_d_l2.on 0.024 0.016       0.002       0.045   sm_d_l2
+
 
 
 # extract reliabilities ----------------------------
@@ -419,11 +424,22 @@ res_m1  %>%
   filter(method == "Dummy")
 
 ## get average reliabilities
+
 res_m1 %>% 
-  group_by(variable, time) %>% 
+  filter(time == T) |> 
   summarise(rel = mean(est))
 
 res_m1 %>% 
+  filter(time == T) |> 
+  group_by(variable) %>% 
+  summarise(rel = mean(est)) |> 
+  arrange(rel)
+
+
+
+
+res_m1 %>% 
+  filter(time == T) |> 
   group_by(method) %>% 
   summarise(rel = mean(est))
 
@@ -517,12 +533,14 @@ res_m2 <- res_reg %>%
                               var == "phot" ~ "Take photos",
                               var == "web" ~ "Web browsing",
                               TRUE ~ "Social media"),
-         variable = fct_rev(as.factor(variable)),
+         variable = as.factor(variable),
          ids_used = nr_ids - ids_issues) %>% 
   select(var, method, everything(), -method1, -method2)
 
 
-
+res_m2 |> 
+  filter(sig == T) |> 
+  select(variable, method, param, est, lower_2.5ci, upper_2.5ci)
 
 
 res_m2 %>% 
