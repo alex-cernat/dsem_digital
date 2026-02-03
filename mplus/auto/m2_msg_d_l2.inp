@@ -1,20 +1,8 @@
-[[init]]
-iterators = var;
-var = 1:10;
 
-# Variable names for substitution
-varNames#var = call_d_l2 msg_d_l2 phot_d_l2 web_d_l2 sm_d_l2 call_c_l2 msg_c_l2
-		phot_c_l2 web_c_l2 sm_c_l2;
-
-# Output directory and filenames
-outputDirectory = "mplus/auto/";
-filename = "m2_[[varNames#var]].inp";
-[[/init]]
-
-TITLE: Two-level AR(1) model for [[varNames#var]];
+TITLE: Two-level AR(1) model for msg_d_l2;
 
 DATA:
-  FILE = "data_full_[[varNames#var]].dat";
+  FILE = "data_full_msg_d_l2.dat";
 
 VARIABLE:
 NAMES = new_id age female edu edu_low edu_med edu_high nr_dev w1_inet w1_sp w1_pc_nr
@@ -26,7 +14,7 @@ NAMES = new_id age female edu edu_low edu_med edu_high nr_dev w1_inet w1_sp w1_p
      call_c_l2 msg_c_l2 phot_c_l2 web_c_l2 sm_c_l2 call_c_b msg_c_b phot_c_b web_c_b
      sm_c_b time; 
   MISSING = .;
-  USEVARIABLES = [[varNames#var]] female age edu_med edu_high nr_dev w1_inet;
+  USEVARIABLES = msg_d_l2 female age edu_med edu_high nr_dev w1_inet;
 !  WITHIN = day_before_w1;
   BETWEEN = female age edu_med edu_high nr_dev;
   CLUSTER = new_id;
@@ -42,16 +30,16 @@ ANALYSIS:
 MODEL:
 
 %WITHIN%
-f BY [[varNames#var]]@1(&1);
-!trend | [[varNames#var]] ON day_before_w1;
+f BY msg_d_l2@1(&1);
+!trend | msg_d_l2 ON day_before_w1;
 stab | f ON f&1;
 
-logv | [[varNames#var]];
+logv | msg_d_l2;
 
 !day_before_w1;
 
 %BETWEEN%
-[[varNames#var]] WITH stab;
+msg_d_l2 WITH stab;
 !stab WITH trend;
 
 [logv] (m);

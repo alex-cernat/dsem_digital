@@ -97,16 +97,21 @@ createModels("./mplus/auto/m1_template_cont.txt")
 createModels("./mplus/auto/m1_template_time.txt")
 createModels("./mplus/auto/m1_template_cont_time.txt")
 createModels("./mplus/auto/m2_template_cont_time.txt")
-
+createModels("./mplus/auto/m2_template_cont.txt")
 
 # Run models ------------------------------------------
 
 models_to_run <- list.files("./mplus/auto/retry", pattern = "inp$", full.names = T)
 
-models_to_run[-(1:7)] %>% 
+
+models_to_run <- list.files("./mplus/auto/", pattern = "inp$", full.names = T) 
+
+str_subset(models_to_run, "m2") %>% 
+  str_subset("time", negate = T) %>% 
   map(runModels, 
       logFile = "./mplus/auto/log.txt", 
       showOutput = T)
+
 
 
 # Explore data with few used cases ------------------------------------------
