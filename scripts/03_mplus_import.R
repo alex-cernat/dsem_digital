@@ -269,14 +269,15 @@ out_retry <- path_retry %>%
 
 issues_retry <- tibble(
   path = path_retry,
-  conv_issue = map_lgl(out_retry, function(x) x$tech8$psr%>%
-                         slice_tail(n = 1) %>%
-                         .[["psr"]] > 1.099
+  conv_issue = map_lgl(out_retry, function(x) {
+    str_detect(x, "THE CONVERGENCE CRITERION IS NOT SATISFIED") |>
+      sum() == 1
+  })
   )
-)
+
+  
 
 
-count(issues_retry, conv_issue)
 
 issues_retry %>% 
   filter(conv_issue) %>% 
@@ -356,10 +357,11 @@ out_m1 <- path2 %>%
 
 issues <- tibble(
   path = path2,
-  conv_issue = map_lgl(out_m1, function(x) x$tech8$psr%>% 
-                         slice_tail(n = 1) %>% 
-                         .[["psr"]] > 1.099
-  )
+  conv_issue = 
+  map_lgl(out_m1, function(x) {
+    str_detect(x, "THE CONVERGENCE CRITERION IS NOT SATISFIED") |>
+      sum() == 1
+  })
 )
 
 
@@ -429,11 +431,24 @@ res_m1 %>%
   filter(time == T) |> 
   summarise(rel = mean(est))
 
+
+res_m1 %>% 
+  filter(time == F) |> 
+  summarise(rel = mean(est))
+
+
 res_m1 %>% 
   filter(time == T) |> 
   group_by(variable) %>% 
   summarise(rel = mean(est)) |> 
   arrange(rel)
+
+res_m1 %>% 
+  filter(time == F) |> 
+  group_by(variable) %>% 
+  summarise(rel = mean(est)) |> 
+  arrange(rel)
+
 
 
 
@@ -443,6 +458,10 @@ res_m1 %>%
   group_by(method) %>% 
   summarise(rel = mean(est))
 
+res_m1 %>% 
+  filter(time == F) |> 
+  group_by(method) %>% 
+  summarise(rel = mean(est))
 
 
 # make graph with confidence interval
@@ -471,6 +490,18 @@ res_m1 %>%
 
 ggsave("./out/m1_time_reliability.png", width = 8, height = 4)
 
+res_m1 %>% 
+  filter(time == F) %>% 
+  ggplot(aes(est, variable, color = method)) +
+  geom_point(position = position_dodge(width = -0.5), size = 3) +
+  geom_errorbar(aes(xmin = lower_2.5ci, xmax = upper_2.5ci), 
+                position = position_dodge(width = -0.5), width = 0) +
+  labs(y= "Variable", x = "Estimated reliability", color = "Method") +
+  theme_bw() +
+  theme(text = element_text(size = 14))
+
+ggsave("./out/m1_reliability.png", width = 8, height = 4)
+
 
 # Extract m2 results ----------------------------
 
@@ -494,9 +525,10 @@ out_m2 <- path_m2b %>%
 # get models with issues
 issues_m2 <- tibble(
   path = path_m2b,
-  conv_issue = map_lgl(out_m2, function(x) x$tech8$psr%>% 
-                         slice_tail(n = 1) %>% 
-                         .[["psr"]] > 1.099
+  conv_issue = 
+  map_lgl(out_m2, function(x) x$tech8$psr%>% 
+            slice_tail(n = 1) %>% 
+            .[["psr"]] > 1.099
   )
 )
 issues_m2
