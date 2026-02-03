@@ -285,8 +285,8 @@ issues_retry %>%
 
 
 
-# issues_retry %>% 
-#   filter(conv_issue) %>% 
+# issues_retry %>%
+#   filter(conv_issue) %>%
 #   pull(path) %>%
 #   str_replace("out", "inp") %>%
 #   map(MplusAutomation::runModels, logFile = "./mplus/auto/retry/log_retry.txt")
