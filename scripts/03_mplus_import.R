@@ -135,6 +135,16 @@ res_m1 %>%
   theme_bw() +
   theme(text = element_text(size = 16))
 
+res_m1 %>% 
+  filter(time == F) %>% 
+  ggplot(aes(est, var, color = method)) +
+  geom_point(position = position_dodge(width = -0.5), size = 3) +
+  geom_errorbar(aes(xmin = lower_2.5ci, xmax = upper_2.5ci), 
+                position = position_dodge(width = -0.5), width = 0) +
+  labs(x = "Variable", y = "Estimated reliability", color = "Method") +
+  theme_bw() +
+  theme(text = element_text(size = 16))
+
 
 
 # Extract m2 results ----------------------------
@@ -166,7 +176,8 @@ names(out_m2) <- path_m2
 
 res_reg <- out_m2 %>% 
   map_df(extract_reg, .id = "model") %>% 
-  mutate(model = str_remove_all(model, ".+m2_|_time.out"))
+  mutate(time = ifelse(str_detect(model, "time"), T, F),
+         model = str_remove_all(model, ".+m2_|_time.out|\\.out"))
 
 
 res_reg
@@ -196,16 +207,16 @@ res_m2 <- res_reg %>%
 res_m2 %>% 
   mutate(sig = ifelse(pval < 0.05, "p < 0.05", "n.s."),
          pred = fct_rev(pred)) %>%
-  ggplot(aes(est, pred, color = method, alpha = sig)) +
+  ggplot(aes(est, pred, color = time, alpha = sig)) +
   geom_vline(xintercept = 0, linetype = "dashed") +
   geom_point(position = position_dodge(width = -0.5), size = 3) +
   geom_errorbar(aes(xmin = lower_2.5ci, xmax = upper_2.5ci), 
                 position = position_dodge(width = -0.5), width = 0) +
   labs(x = "Regression coefficient", 
        y = "Predictor", 
-       color = "Method",
+       color = "Time control",
        alpha = "Significant") +
-  facet_wrap(~var, ncol = 2) +
+  facet_grid(method~var) +
   theme_bw() +
   theme(text = element_text(size = 16), legend.position = "bottom") 
 
@@ -219,23 +230,23 @@ to_run <- c(paths_to_run, paths_to_run2, path_m2) %>%
   str_replace("out", "inp")
   
 
-# make new folder for rerun
-dir.create("./mplus/auto/retry/", showWarnings = F)
-file.copy(to_run, 
-          "./mplus/auto/retry/", 
-          overwrite = T)
-# copy data files
-list.files("./mplus/auto/", 
-           pattern = ".dat", 
-           full.names = T) %>%
-  file.copy("./mplus/auto/retry/", 
-            overwrite = T)
-
-list.files("./mplus/auto/retry",
-           pattern = "inp",
-           full.names = T) %>% 
-  runModels(logFile = "./mplus/auto/log_retry.txt", 
-            showOutput = T)
+# # make new folder for rerun
+# dir.create("./mplus/auto/retry/", showWarnings = F)
+# file.copy(to_run, 
+#           "./mplus/auto/retry/", 
+#           overwrite = T)
+# # copy data files
+# list.files("./mplus/auto/", 
+#            pattern = ".dat", 
+#            full.names = T) %>%
+#   file.copy("./mplus/auto/retry/", 
+#             overwrite = T)
+# 
+# list.files("./mplus/auto/retry",
+#            pattern = "inp",
+#            full.names = T) %>% 
+#   runModels(logFile = "./mplus/auto/log_retry.txt", 
+#             showOutput = T)
 
 
 # compare long runs with original models ----------------------------
@@ -434,7 +445,7 @@ res_m1 %>%
 
 res_m1 %>% 
   filter(time == F) |> 
-  summarise(rel = mean(est))
+  summarise(rel = mean(est)) |> round(2)
 
 
 res_m1 %>% 
@@ -446,8 +457,8 @@ res_m1 %>%
 res_m1 %>% 
   filter(time == F) |> 
   group_by(variable) %>% 
-  summarise(rel = mean(est)) |> 
-  arrange(rel)
+  summarise(rel = mean(est) |> round(2)) |> 
+  arrange(rel) 
 
 
 
@@ -461,7 +472,7 @@ res_m1 %>%
 res_m1 %>% 
   filter(time == F) |> 
   group_by(method) %>% 
-  summarise(rel = mean(est))
+  summarise(rel = mean(est) |> round(2))
 
 
 # make graph with confidence interval
@@ -509,13 +520,18 @@ ggsave("./out/m1_reliability.png", width = 8, height = 4)
 path_m2 <- list.files("./mplus/auto/", 
                       full.names = TRUE, 
                       pattern = "out") %>% 
+  str_subset("m2") |> 
+  str_subset("time", negate = T)
+
+path_m2_retry <- list.files("./mplus/auto/retry", 
+                      full.names = TRUE, 
+                      pattern = "out") %>% 
   str_subset("m2")
 
 
-path_m2b <- ifelse(path_m2 %in% path_orig, 
-                str_replace(path_m2, "auto/", "auto/retry/"), 
-                path_m2
-)
+
+
+path_m2b <- c(path_m2, path_m2_retry)
 
 
 
@@ -536,11 +552,12 @@ issues_m2
 
 
 
-names(out_m2) <- path_m2
+names(out_m2) <- path_m2b
 
 res_reg <- out_m2 %>% 
   map_df(extract_reg, .id = "model") %>% 
-  mutate(model = str_remove_all(model, ".+m2_|_time.out"))
+  mutate(time = ifelse(str_detect(model, "time"), T, F),
+         model = str_remove_all(model, ".+m2_|_time.out|\\.out"))
 
 
 res_reg
@@ -553,7 +570,7 @@ res_reg
 res_m2 <- res_reg %>% 
   separate(model, into = c("var", "method1", "method2"), sep = "_") %>% 
   mutate(method = case_when(method1 == "d" ~ "Duration",
-                            method1 == "c" & method2 == "l2" ~ "Count",
+                            method1 == "c" ~ "Count",
                             TRUE ~ "Dummy"),
          pred = case_when(param == "female" ~ "Female",
                           param == "age" ~ "Age",
@@ -571,11 +588,12 @@ res_m2 <- res_reg %>%
 
 
 res_m2 |> 
-  filter(sig == T) |> 
+  filter(sig == T, time == F) |> 
   select(variable, method, param, est, lower_2.5ci, upper_2.5ci)
 
 
 res_m2 %>% 
+  filter(time == F) |> 
   mutate(sig = ifelse(sig == T, "p < 0.05", "n.s."),
          pred = fct_rev(pred)) %>%
   ggplot(aes(est, pred, color = method, alpha = sig)) +
@@ -591,5 +609,25 @@ res_m2 %>%
   theme_bw() +
   theme(text = element_text(size = 16), legend.position = "bottom") 
 
-ggsave("./out/m2_regression_coefficients.png", width = 10, height = 8)
+ggsave("./out/m2_regression_coefficients.png", width = 10, height = 6)
 
+
+
+
+res_m2 %>% 
+  mutate(sig = ifelse(sig == T, "p < 0.05", "n.s."),
+         pred = fct_rev(pred)) %>%
+  ggplot(aes(est, pred, color = time, alpha = sig)) +
+  geom_vline(xintercept = 0, linetype = "dashed") +
+  geom_point(position = position_dodge(width = -0.5), size = 3) +
+  geom_errorbar(aes(xmin = lower_2.5ci, xmax = upper_2.5ci), 
+                position = position_dodge(width = -0.5), width = 0) +
+  labs(x = "Regression coefficient", 
+       y = "Predictor", 
+       color = "Time",
+       alpha = "Significant") +
+  facet_grid(method~variable) +
+  theme_bw() +
+  theme(text = element_text(size = 16), legend.position = "bottom") 
+
+ggsave("./out/m2_regression_time_comp.png", width = 10, height = 4.5)
