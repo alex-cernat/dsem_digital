@@ -1,7 +1,9 @@
-------Begin Mplus Model Run: 27Nov2025 16:54:02------
+------Begin Mplus Model Run: 14Feb2026 01:18:20------
 Run options:
 	Recursive (run models in subdirectories): FALSE
 	Show output on console: TRUE
 	Replace existing outfile: always
 ------
-Currently running model: m2_web_d_l2_time.inp
+Currently running model: m2_web_d_l2.inp
+
+------End Mplus Model Run: 15Feb2026 14:31:42------

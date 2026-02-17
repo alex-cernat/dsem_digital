@@ -1,0 +1,2281 @@
+Mplus VERSION 9 (Linux)
+MUTHEN & MUTHEN
+02/04/2026   2:03 PM
+
+INPUT INSTRUCTIONS
+
+
+  TITLE: Two-level AR(1) model for call_d_l2;
+
+  DATA:
+    FILE = "data_full_call_d_l2.dat";
+
+  VARIABLE:
+  NAMES = new_id age female edu edu_low edu_med edu_high nr_dev w1_inet w1_sp w1_pc_nr
+       w1_sph_nr w1_tabl_nr date call_c msg_c phot_c call_d msg_d phot_d web_c web_d
+       sm_c sm_d w1_date w1b_date w1_date_7 w1_date_30 w1b_date_7 w1b_date_30
+       day_before_w1 day_before_w1b w1_7d_window w1b_7d_window w1_30d_window
+       w1b_30d_window days_c call_d_l msg_d_l phot_d_l web_d_l sm_d_l call_c_l msg_c_l
+       phot_c_l web_c_l sm_c_l days_c_l call_d_l2 msg_d_l2 phot_d_l2 web_d_l2 sm_d_l2
+       call_c_l2 msg_c_l2 phot_c_l2 web_c_l2 sm_c_l2 call_c_b msg_c_b phot_c_b web_c_b
+       sm_c_b time;
+    MISSING = .;
+    USEVARIABLES = call_d_l2 female age edu_med edu_high nr_dev w1_inet;
+  !  WITHIN = day_before_w1;
+    BETWEEN = female age edu_med edu_high nr_dev;
+    CLUSTER = new_id;
+    TINTERVAL = time (1 time2);
+
+  ANALYSIS:
+    TYPE = TWOLEVEL RANDOM;
+    ESTIMATOR = BAYES;
+    PROCESSORS = 30;
+    BITERATIONS = 200000 (100000);
+    THIN = 20;
+
+  MODEL:
+
+  %WITHIN%
+  f BY call_d_l2@1(&1);
+  !trend | call_d_l2 ON day_before_w1;
+  stab | f ON f&1;
+
+  logv | call_d_l2;
+
+  !day_before_w1;
+
+  %BETWEEN%
+  call_d_l2 WITH stab;
+  !stab WITH trend;
+
+  [logv] (m);
+  logv (s);
+
+  logv ON female age edu_med edu_high nr_dev;
+
+  female;
+  age;
+  edu_med;
+  edu_high;
+  nr_dev;
+
+  Model Constraint:
+            new(medv meanv 25qv 75qv);		
+            medv = exp(m);
+            meanv = exp(m + s/2);
+    		! 25th and 75th quartiles
+    		! based on normal dist of logv:
+    		25qv = exp(m - sqrt(s)*0.675);
+    		75qv = exp(m + sqrt(s)*0.675);
+
+
+
+
+  OUTPUT: TECH1 TECH8 TECH4 STDYX residual;
+
+  PLOT: TYPE = PLOT3;
+
+
+
+*** WARNING in VARIABLE command
+  Note that only the first 8 characters of variable names are used in the output.
+  Shorten variable names to avoid any confusion.
+*** WARNING in MODEL command
+  Variable is uncorrelated with all other variables: W1_INET
+*** WARNING in MODEL command
+  At least one variable is uncorrelated with all other variables in the model.
+  Check that this is what is intended.
+*** WARNING in PLOT command
+  Note that only the first 8 characters of variable names are used in plots.
+  If variable names are not unique within the first 8 characters, problems
+  may occur.
+*** WARNING
+  One or more individual-level variables have no variation within a
+  cluster for the following clusters.
+
+     Variable   Cluster IDs with no within-cluster variation
+
+      CALL_D_L    1770 1966 2073
+      W1_INET     514 657 1028 2062 1796 1780 501 1060 534 146 397 98 565 1782 1874 671 2217 862
+                  833 303 245 1446 1928 412 761 407 712 2052 463 1540 2216 773 2129 1974 752 1146
+                  2012 955 1177 494 1197 647 363 1899 92 2207 2144 1273 226 189 117 1025 241 900
+                  1677 1361 298 1101 582 297 521 1549 1766 252 1189 1666 1211 620 2171 902 931
+                  825 337 2103 762 1199 2034 2139 435 681 982 2064 384 538 2039 341 1865 956 1888
+                  1152 394 1877 420 441 411 2007 1089 1091 2061 196 270 224 1706 1599 1155 52
+                  386 1430 1053 1524 1926 1448 1109 864 553 1343 1998 111 365 1021 1246 1122 870
+                  1049 272 733 1337 967 1224 1627 1227 2181 1302 636 1317 669 725 1971 392 1159
+                  1184 293 611 991 631 1847 1516 978 592 108 974 182 1551 380 728 520 934 2140
+                  1834 26 495 492 667 286 1626 1544 1339 524 260 1644 301 452 2197 446 294 309
+                  239 414 376 1697 277 1809 235 1402 284 115 399 1808 1335 262 143 1615 396 455
+                  198 317 148 393 1461 263 320 398 172 993 132 2211 361 447 1931 362 1210 110
+                  328 1818 432 155 180 1468 137 453 428 278 157 153 250 167 217 129 440 220 1470
+                  2043 147 1637 211 177 149 400 443 323 187 353 186 246 212 240 418 370 205 274
+                  193 433 163 229 4 405 287 410 354 368 314 2223 357 307 423 109 745 1031 644
+                  2121 2150 461 1415 1979 33 929 1133 79 753 1445 1381 642 885 1185 1421 1572
+                  1770 1716 684 2067 1522 1200 1984 540 1586 1465 77 1154 1785 1365 809 88 1695
+                  1554 2163 558 1902 498 886 895 1263 1850 1944 1768 18 767 1064 1624 1608 780
+                  1745 674 1981 2199 837 1966 1811 550 2028 2224 1955 1924 615 2148 1935 1963
+                  1803 940 1412 1708 1024 46 21 1151 1561 1033 1919 1231 1953 2196 965 709 726
+                  1067 1214 1895 1654 1110 1003 947 600 1774 1669 1259 1791 99 544 1236 2075 1451
+                  486 1891 2065 1580 44 665 1946 85 90 2098 1323 711 1710 802 1588 515 1881 813
+                  1128 1568 2069 1849 1546 2044 999 882 32 959 1947 1840 1111 858 2213 1366 1656
+                  1839 986 1352 876 1248 1181 2165 65 1680 62 909 763 1314 1114 645 1294 1814
+                  1249 810 552 1951 1472 1008 1460 1032 933 506 1940 630 1916 1542 822 1778 932
+                  1590 632 1001 719 1050 1645 859 834 105 1997 1232 1833 603 2024 1117 2185 1659
+                  1528 1585 1509 2047 1703 1360 1930 653 970 1905 640 1276 680 953 1190 72 1790
+                  1104 1661 992 1957 786 2115 2147 1760 1353 966 1754 1182 1678 987 1502 1562
+                  40 616 2022 93 2169 1612 1307 19 1773 1646 2073 579 1992 896 720 1829 1171 944
+                  502 1601 2038 1573 1817 559 1879 1714 1851 2099 100 643 853 2137 646 1139 1254
+                  593 1837 695 606 1765 541 1923 946 678 1256 1135 561 1729 613 602 1371 1618
+                  717 639 1828 735 467 1202 1035 1305 995 1591 605 807 2182 682 508 1999 1686
+                  1793 557 1720 906 648 1326 1757 1498 1967 784 2 1485 2070 1607 894 829 1315
+                  1581 1147 889 1160 1595 2001 1873 1237 1870 474 2003 1701 484 547 11 782 1225
+                  1835 499 2063 1674 2081 470 1989 1987 1478 1789 1086 1727 2160 1041 1584 958
+                  1934 849 1869 1623 1298 977 918 1291 1324 901 1030 1673 1914 2036 2013 1788
+                  1334 860 1330 772 2082 638 2000 1755 2141 1071 1115 855 740 904 1077 1303 488
+                  973 1044 2138 1743 892 1731 1075 2198 1350 1311 1671 930 1022 562 525 633 1280
+                  1660 821 1340 1015 1264 1675 938 994 48 2056 941 2111 1715 2035 1759 1174 845
+                  686 1648 1613 471 1002 874 1912 2040 880 599 13 59 35 69 78 37 39 12 97 86 29
+
+*** WARNING
+  Data set contains cases with missing on all variables.
+  These cases were not included in the analysis.
+  Number of cases with missing on all variables:  1519
+   6 WARNING(S) FOUND IN THE INPUT INSTRUCTIONS
+
+
+
+Two-level AR(1) model for call_d_l2;
+
+SUMMARY OF ANALYSIS
+
+Number of groups                                                 1
+Number of observations                                       19347
+
+Number of dependent variables                                    2
+Number of independent variables                                  5
+Number of continuous latent variables                            4
+
+Observed dependent variables
+
+  Continuous
+   CALL_D_L2   W1_INET
+
+Observed independent variables
+   FEMALE      AGE         EDU_MED     EDU_HIGH    NR_DEV
+
+Continuous latent variables
+   F           F&1         STAB        LOGV
+
+Variables with special functions
+
+  Cluster variable      NEW_ID
+
+  Between variables
+   FEMALE      AGE         EDU_MED     EDU_HIGH    NR_DEV
+
+
+Estimator                                                    BAYES
+Specifications for Bayesian Estimation
+  Point estimate                                            MEDIAN
+  Number of Markov chain Monte Carlo (MCMC) chains               2
+  Random seed for the first chain                                0
+  Starting value information                           UNPERTURBED
+  Algorithm used for Markov chain Monte Carlo           GIBBS(PX1)
+  Convergence criterion                                  0.500D-01
+  Maximum number of iterations                              200000
+  K-th iteration used for thinning                              20
+
+Input data file(s)
+  data_full_call_d_l2.dat
+Input data format  FREE
+
+
+SUMMARY OF DATA
+
+     Number of clusters                        696
+
+       Size (s)    Cluster ID with Size s
+
+          3        514
+          4        657
+          5        1028 2062
+          6        1796 1780 501
+          7        1060
+          8        534 146 397 98 565
+          9        1782 1874
+         10        671 2217
+         11        862 833
+         12        303
+         13        245 1446
+         15        1928 412 761 407
+         16        712 2052 463 1540 2216 773 2129 1974 752
+         17        1146 2012 955
+         18        1177 494 1197 647
+         19        363 1899 92 2207 2144
+         20        1273 226 189 117 1025 241 900 1677 1361
+         21        298 1101 582 297 521 1549 1766 252 1189 1666
+         22        1211 620 2171 902 931 825 337 2103 762 1199 2034 2139
+         23        435 681 982 2064 384 538 2039 341
+         24        1865 956 1888 1152 394 1877 420 441
+         25        411 2007 1089 1091 2061 196 270 224 1706 1599 1155 52
+                   386 1430 1053
+         26        1524 1926 1448 1109 864 553 1343 1998 111 365 1021 1246
+                   1122 870 1049 272 733 1337
+         27        967 1224 1627 1227 2181 1302 636 1317 669 725 1971 392
+                   1159 1184 293 611 991
+         28        631 1847 1516 978 592 108 974 182 1551 380 728 520 934
+                   2140 1834 26 495 492 667 286 1626 1544 1339 524 260
+         29        1644 301 452 2197 446 294 309 239 414 376 1697 277 1809
+                   235 1402 284 115 399 1808 1335 262 143 1615 396 455
+                   198 317 148 393 1461 263 320 398 172 993 132 2211 361
+                   447 1931 362 1210 110 328 1818 432 155 180 1468 137
+                   453 428 278 157 153 250 167 217 129 440 220 1470 2043
+                   147 1637 211 177 149 400 443 323 187 353 186 246 212
+                   240 418 370 205 274 193 433 163 229 4 405 287 410 354
+                   368 314 2223 357 307 423 109
+         30        745 1031 644 2121 2150 461 1415 1979 33 929 1133 79
+                   753 1445 1381 642 885 1185 1421 1572 1770 1716 684 2067
+                   1522 1200 1984 540 1586 1465 77 1154 1785 1365 809 88
+                   1695 1554 2163 558 1902 498 886 895 1263 1850 1944 1768
+                   18 767 1064 1624 1608 780 1745 674 1981 2199 837 1966
+                   1811 550 2028 2224 1955 1924 615 2148 1935 1963 1803
+                   940 1412 1708 1024 46 21 1151 1561 1033 1919 1231 1953
+                   2196 965 709 726 1067 1214 1895 1654 1110 1003 947 600
+                   1774 1669 1259 1791 99 544 1236 2075 1451 486 1891 2065
+                   1580 44 665 1946 85 90 2098 1323 711 1710 802 1588 515
+                   1881 813 1128 1568 2069 1849 1546 2044 999 882 32 959
+                   1947 1840 1111 858 2213 1366 1656 1839 986 1352 876
+                   1248 1181 2165 65 1680 62 909 763 1314 1114 645 1294
+                   1814 1249 810 552 1951 1472 1008 1460 1032 933 506 1940
+                   630 1916 1542 822 1778 932 1590 632 1001 719 1050 1645
+                   859 834 105 1997 1232 1833 603 2024 1117 2185 1659 1528
+                   1585 1509 2047 1703 1360 1930 653 970 1905 640 1276
+                   680 953 1190 72 1790 1104 1661 992 1957 786 2115 2147
+                   1760 1353 966 1754 1182 1678 987 1502 1562 40 616 2022
+                   93 2169 1612 1307 19 1773 1646 2073 579 1992 896 720
+                   1829 1171 944 502 1601 2038 1573 1817 559 1879 1714
+                   1851 2099 100 643 853 2137 646 1139 1254 593 1837 695
+                   606 1765 541 1923 946 678 1256 1135 561 1729 613 602
+                   1371 1618 717 639 1828 735 467 1202 1035 1305 995 1591
+                   605 807 2182 682 508 1999 1686 1793 557 1720 906 648
+                   1326 1757 1498 1967 784 2 1485 2070 1607 894 829 1315
+                   1581 1147 889 1160 1595 2001 1873 1237 1870 474 2003
+                   1701 484 547 11 782 1225 1835 499 2063 1674 2081 470
+                   1989 1987 1478 1789 1086 1727 2160 1041 1584 958 1934
+                   849 1869 1623 1298 977 918 1291 1324 901 1030 1673 1914
+                   2036 2013 1788 1334 860 1330 772 2082 638 2000 1755
+                   2141 1071 1115 855 740 904 1077 1303 488 973 1044 2138
+                   1743 892 1731 1075 2198 1350 1311 1671 930 1022 562
+                   525 633 1280 1660 821 1340 1015 1264 1675 938 994 48
+                   2056 941 2111 1715 2035 1759 1174 845 686 1648 1613
+                   471 1002 874 1912 2040 880 599 13 59 35 69 78 37 39
+                   12 97 86 29
+
+
+
+COVARIANCE COVERAGE OF DATA
+
+Minimum covariance coverage value   0.100
+
+     Number of missing data patterns            11
+
+
+     PROPORTION OF DATA PRESENT
+
+
+           Covariance Coverage
+              FEMALE        AGE           EDU_MED       EDU_HIGH      NR_DEV
+              ________      ________      ________      ________      ________
+ FEMALE         0.855
+ AGE            0.855         0.857
+ EDU_MED        0.855         0.857         1.000
+ EDU_HIGH       0.855         0.857         1.000         1.000
+ NR_DEV         0.855         0.857         1.000         1.000         1.000
+ CALL_D_L       0.336         0.336         0.386         0.386         0.386
+ W1_INET        0.582         0.583         0.654         0.654         0.654
+
+
+           Covariance Coverage
+              CALL_D_L      W1_INET
+              ________      ________
+ CALL_D_L       0.386
+ W1_INET        0.307         0.654
+
+
+
+UNIVARIATE SAMPLE STATISTICS
+
+
+     UNIVARIATE HIGHER-ORDER MOMENT DESCRIPTIVE STATISTICS
+
+         Variable/         Mean/     Skewness/   Minimum/ % with                Percentiles
+        Sample Size      Variance    Kurtosis    Maximum  Min/Max      20%/60%    40%/80%    Median
+
+     FEMALE                0.486       0.057       0.000   51.43%       0.000      0.000      0.000
+             593.000       0.250      -1.997       1.000   48.57%       1.000      1.000
+     AGE                  45.424      -0.181      14.000    0.17%      33.000     42.000     46.000
+             595.000     178.738      -0.821      78.000    0.17%      50.000     58.000
+     EDU_MED               0.435       0.261       0.000   56.47%       0.000      0.000      0.000
+             696.000       0.246      -1.932       1.000   43.53%       1.000      1.000
+     EDU_HIGH              0.414       0.350       0.000   58.62%       0.000      0.000      0.000
+             696.000       0.243      -1.877       1.000   41.38%       1.000      1.000
+     NR_DEV                2.402      -0.495       1.000    6.61%       2.000      2.000      2.000
+             696.000       0.373      -0.641       3.000   46.84%       3.000      3.000
+     CALL_D_L2            -0.197      -0.031      -4.094    3.01%      -1.792     -0.629     -0.143
+            7467.000       3.290      -0.418       5.093    0.01%       0.312      1.369
+     W1_INET               3.726       1.982       0.000    1.34%       1.000      2.500      3.000
+           12661.000       9.954       9.746      40.000    0.05%       3.500      5.917
+
+
+     WARNING: PROBLEMS OCCURRED IN SEVERAL ITERATIONS IN THE COMPUTATION OF THE STANDARDIZED ESTIMATES FOR SEVERAL
+     CLUSTERS. THIS IS MOST LIKELY DUE TO AR COEFFICIENTS GREATER THAN 1 OR PARAMETERS GIVING NON-STATIONARY MODELS.
+     SUCH POSTERIOR DRAWS ARE REMOVED. THE FOLLOWING CLUSTERS HAD SUCH PROBLEMS:
+          514 657 1028 2062 1796 1780 501 1060 534 146 397 98 565 1782 1874 671 2217 862 833 303 245
+          1446 1928 412 761 407 712 2052 463 1540 2216 773 2129 752 1146 955 1177 494 1197 647 363 92
+          2207 2144 1273 226 189 117 1025 241 900 1677 1361 298 582 297 521 1549 1766 1189 1666 1211
+          620 2171 902 931 825 337 2103 762 1199 2034 2139 435 681 982 2064 384 538 2039 341 1888 1152
+          394 1877 420 441 411 2007 1089 1091 2061 196 270 224 1706 1599 1155 52 1430 1053 1926 1448
+          864 1343 1998 111 365 1021 1246 1122 870 272 967 1224 1627 1227 2181 1302 1317 669 1184 991
+          631 1847 1516 592 182 1551 380 728 934 2140 1834 26 667 286 1626 1544 1339 301 446 309 239
+          376 1697 277 235 115 399 1808 1335 262 143 396 198 393 1461 263 320 398 172 132 2211 361 1931
+          362 1210 1818 155 180 1468 137 428 157 129 2043 1637 211 149 443 323 187 353 186 246 370 205
+          274 193 433 163 229 4 405 368 314 2223 307 423 109 745 1031 644 2121 2150 461 1415 1979 33
+          929 1133 79 753 1445 1381 642 885 1421 1572 1770 1716 684 2067 1522 1200 540 1586 1465 77 1365
+          809 88 1695 1554 2163 558 1902 895 1263 1850 1944 1768 18 1064 1624 1608 1745 674 1966 550
+          1955 1924 2148 1935 1803 940 1412 1708 1024 46 1151 2196 965 726 1067 947 600 1669 1259 1791
+          99 2075 1451 486 1891 2065 1580 44 665 1946 90 2098 711 1710 802 515 1881 1128 1568 2069 1849
+          1546 2044 999 882 32 959 1840 1111 858 2213 1366 1656 1839 986 1352 876 1248 1181 2165 65 1680
+          62 909 763 1314 1114 645 1294 810 1951 1008 1460 933 506 1940 1916 1542 822 1778 932 1590 632
+          1001 719 1050 1645 859 834 105 1117 2185 1528 1585 2047 1703 1360 1930 653 1905 640 1276 1190
+          1790 992 1957 786 2147 1760 1678 1562 616 93 1307 19 1773 1646 2073 579 1992 720 1829 1171
+          502 1601 2038 1817 559 1879 2137 1139 593 1837 695 606 1765 541 1923 946 678 1135 613 1371
+          717 639 1828 467 1202 1591 605 2182 508 1999 648 1326 1757 1967 784 2 1485 2070 1607 894 829
+          1315 1581 1160 1595 2001 1237 1870 474 2003 484 547 1225 1835 499 2063 1674 2081 470 1727 2160
+          1041 1584 1934 1869 1623 1298 977 918 1324 1030 1673 1914 2013 1788 1334 860 772 2082 638 2000
+          1755 2141 1071 855 740 1077 1303 973 1044 892 1350 1311 930 562 525 633 1280 1660 821 1340
+          1015 1264 938 994 48 2056 2111 1715 2035 1759 1174 845 686 1002 874 1912 2040 880 599 13 59
+          35 69 78 12 97 86 29
+
+THE MODEL ESTIMATION TERMINATED NORMALLY
+
+     USE THE FBITERATIONS OPTION TO INCREASE THE NUMBER OF ITERATIONS BY A FACTOR
+     OF AT LEAST TWO TO CHECK CONVERGENCE AND THAT THE PSR VALUE DOES NOT INCREASE.
+
+     THE EFFECTIVE SAMPLE SIZE FOR THE POSTERIOR DISTRIBUTION OF PARAMETER 1 IS LESS THAN 20.
+     ESS > 200-400 IS RECOMMENDED. USE BITER=2000000(1000000) OR SIMPLIFY THE MODEL.
+
+
+
+MODEL FIT INFORMATION
+
+Number of Free Parameters                              36
+
+Information Criteria
+
+          Deviance (DIC)                     ************
+          Estimated Number of Parameters (pD)************
+
+
+
+MODEL RESULTS
+
+                                Posterior  One-Tailed         95% C.I.
+                    Estimate       S.D.      P-Value   Lower 2.5%  Upper 2.5%  Significance
+
+Within Level
+
+ F        BY
+    CALL_D_L2          1.000       0.000      0.000       1.000       1.000
+
+ Variances
+    W1_INET            0.000       0.000      0.000       0.000       0.000      *
+
+ Residual Variances
+    F                  0.362       0.125      0.000       0.158       0.645      *
+
+Between Level
+
+ LOGV       ON
+    FEMALE            -0.064       0.070      0.174      -0.204       0.072
+    AGE                0.001       0.003      0.378      -0.004       0.006
+    EDU_MED            0.157       0.099      0.055      -0.036       0.355
+    EDU_HIGH           0.190       0.104      0.030      -0.009       0.399
+    NR_DEV            -0.011       0.054      0.416      -0.119       0.094
+
+ CALL_D_L WITH
+    STAB               0.061       0.050      0.107      -0.038       0.159
+
+ AGE      WITH
+    FEMALE            -0.337       0.283      0.114      -0.895       0.213
+
+ EDU_MED  WITH
+    FEMALE            -0.006       0.010      0.290      -0.027       0.015
+    AGE                1.179       0.282      0.000       0.640       1.746      *
+
+ EDU_HIGH WITH
+    FEMALE            -0.005       0.010      0.329      -0.025       0.016
+    AGE               -1.643       0.283      0.000      -2.216      -1.105      *
+    EDU_MED           -0.183       0.012      0.000      -0.208      -0.161      *
+
+ NR_DEV   WITH
+    FEMALE            -0.036       0.013      0.002      -0.062      -0.011      *
+    AGE                0.534       0.344      0.059      -0.135       1.216
+    EDU_MED           -0.016       0.012      0.088      -0.039       0.007
+    EDU_HIGH           0.035       0.012      0.001       0.013       0.059      *
+
+ Means
+    FEMALE             0.486       0.021      0.000       0.445       0.526      *
+    AGE               45.469       0.552      0.000      44.387      46.557      *
+    EDU_MED            0.435       0.019      0.000       0.398       0.472      *
+    EDU_HIGH           0.414       0.019      0.000       0.377       0.451      *
+    NR_DEV             2.402       0.023      0.000       2.357       2.448      *
+    CALL_D_L2         -0.476       0.048      0.000      -0.571      -0.382      *
+    W1_INET            3.821       0.132      0.000       3.565       4.081      *
+    STAB               0.298       0.081      0.000       0.158       0.473      *
+
+ Intercepts
+    LOGV               0.222       0.222      0.164      -0.249       0.626
+
+ Variances
+    FEMALE             0.255       0.015      0.000       0.228       0.286      *
+    AGE              182.234      10.706      0.000     162.723     204.676      *
+    EDU_MED            0.250       0.014      0.000       0.225       0.278      *
+    EDU_HIGH           0.247       0.013      0.000       0.222       0.275      *
+    NR_DEV             0.379       0.021      0.000       0.341       0.422      *
+    CALL_D_L2          1.279       0.086      0.000       1.122       1.459      *
+    W1_INET           10.913       0.603      0.000       9.816      12.175      *
+    STAB               0.029       0.018      0.000       0.004       0.072      *
+
+ Residual Variances
+    LOGV               0.246       0.054      0.000       0.169       0.381      *
+
+New/Additional Parameters
+    MEDV               1.249       0.278      0.000       0.780       1.870      *
+    MEANV              1.413       0.306      0.000       0.904       2.104      *
+    25QV               0.893       0.211      0.000       0.535       1.361      *
+    75QV               1.744       0.375      0.000       1.124       2.595      *
+
+
+STANDARDIZED MODEL RESULTS
+
+
+STDYX Standardization
+
+                                Posterior  One-Tailed         95% C.I.
+                    Estimate       S.D.      P-Value   Lower 2.5%  Upper 2.5%  Significance
+
+Within-Level Standardized Estimates Averaged Over Clusters
+
+ F        BY
+    CALL_D_L2          0.477       0.046      0.000       0.392       0.574      *
+
+ STAB | F ON
+    F&1                0.314       0.064      0.000       0.183       0.433      *
+
+ LOGV |
+    CALL_D_L2          0.764       0.045      0.000       0.659       0.840      *
+
+ Variances
+    W1_INET            1.000       0.000      0.000       1.000       1.000
+
+ Residual Variances
+    F                  0.871       0.037      0.000       0.792       0.938      *
+
+Between Level
+
+ LOGV       ON
+    FEMALE            -0.064       0.068      0.174      -0.197       0.071
+    AGE                0.022       0.071      0.378      -0.117       0.159
+    EDU_MED            0.155       0.095      0.055      -0.035       0.340
+    EDU_HIGH           0.187       0.099      0.030      -0.009       0.378
+    NR_DEV            -0.014       0.065      0.416      -0.142       0.113
+
+ CALL_D_L WITH
+    STAB               0.333       0.282      0.107      -0.251       0.871
+
+ AGE      WITH
+    FEMALE            -0.050       0.041      0.114      -0.130       0.031
+
+ EDU_MED  WITH
+    FEMALE            -0.023       0.041      0.290      -0.104       0.058
+    AGE                0.175       0.040      0.000       0.096       0.251      *
+
+ EDU_HIGH WITH
+    FEMALE            -0.018       0.041      0.329      -0.099       0.062
+    AGE               -0.245       0.039      0.000      -0.319      -0.168      *
+    EDU_MED           -0.738       0.017      0.000      -0.770      -0.702      *
+
+ NR_DEV   WITH
+    FEMALE            -0.117       0.041      0.002      -0.196      -0.037      *
+    AGE                0.064       0.041      0.059      -0.016       0.144
+    EDU_MED           -0.052       0.038      0.088      -0.126       0.023
+    EDU_HIGH           0.116       0.038      0.001       0.041       0.189      *
+
+ Means
+    FEMALE             0.962       0.050      0.000       0.864       1.060      *
+    AGE                3.369       0.106      0.000       3.161       3.580      *
+    EDU_MED            0.871       0.044      0.000       0.783       0.958      *
+    EDU_HIGH           0.833       0.044      0.000       0.747       0.920      *
+    NR_DEV             3.902       0.112      0.000       3.686       4.122      *
+    CALL_D_L2         -0.421       0.044      0.000      -0.508      -0.335      *
+    W1_INET            1.157       0.051      0.000       1.057       1.258      *
+    STAB               1.784       1.309      0.000       0.714       5.706      *
+
+ Intercepts
+    LOGV               0.439       0.448      0.164      -0.444       1.312
+
+ Variances
+    FEMALE             1.000       0.000      0.000       1.000       1.000
+    AGE                1.000       0.000      0.000       1.000       1.000
+    EDU_MED            1.000       0.000      0.000       1.000       1.000
+    EDU_HIGH           1.000       0.000      0.000       1.000       1.000
+    NR_DEV             1.000       0.000      0.000       1.000       1.000
+    CALL_D_L2          1.000       0.000      0.000       1.000       1.000
+    W1_INET            1.000       0.000      0.000       1.000       1.000
+    STAB               1.000       0.000      0.000       1.000       1.000
+
+ Residual Variances
+    LOGV               0.962       0.023      0.000       0.905       0.991      *
+
+
+R-SQUARE
+
+Within-Level R-Square Averaged Across Clusters
+
+                                Posterior  One-Tailed         95% C.I.
+    Variable        Estimate       S.D.      P-Value   Lower 2.5%  Upper 2.5%
+
+    CALL_D_L2          0.236       0.045      0.000       0.160       0.341
+
+                                Posterior  One-Tailed         95% C.I.
+    Variable        Estimate       S.D.      P-Value   Lower 2.5%  Upper 2.5%
+
+    F                  0.129       0.037      0.000       0.061       0.208
+
+Between Level
+
+                                Posterior  One-Tailed         95% C.I.
+    Variable        Estimate       S.D.      P-Value   Lower 2.5%  Upper 2.5%
+
+    LOGV               0.038       0.023      0.000       0.009       0.095
+
+
+RESIDUAL OUTPUT
+
+
+     ESTIMATED MODEL
+
+
+     AVERAGE CLUSTER ESTIMATES
+
+
+           Means
+              FEMALE        AGE           EDU_MED       EDU_HIGH      NR_DEV
+              ________      ________      ________      ________      ________
+                0.486        45.470         0.435         0.414         2.402
+
+
+           Means
+              CALL_D_L      W1_INET
+              ________      ________
+               -0.476         3.715
+
+
+           Covariances
+              FEMALE        AGE           EDU_MED       EDU_HIGH      NR_DEV
+              ________      ________      ________      ________      ________
+ FEMALE         0.000
+ AGE            0.000         0.000
+ EDU_MED        0.000         0.000         0.000
+ EDU_HIGH       0.000         0.000         0.000         0.000
+ NR_DEV         0.000         0.000         0.000         0.000         0.000
+ CALL_D_L       0.000         0.000         0.000         0.000         0.000
+ W1_INET        0.000         0.000         0.000         0.000         0.000
+
+
+           Covariances
+              CALL_D_L      W1_INET
+              ________      ________
+ CALL_D_L       2.043
+ W1_INET        0.000         0.000
+
+
+           Correlations
+              FEMALE        AGE           EDU_MED       EDU_HIGH      NR_DEV
+              ________      ________      ________      ________      ________
+ FEMALE         1.000
+ AGE            0.000         1.000
+ EDU_MED        0.000         0.000         1.000
+ EDU_HIGH       0.000         0.000         0.000         1.000
+ NR_DEV         0.000         0.000         0.000         0.000         1.000
+ CALL_D_L       0.000         0.000         0.000         0.000         0.000
+ W1_INET        0.000         0.000         0.000         0.000         0.000
+
+
+           Correlations
+              CALL_D_L      W1_INET
+              ________      ________
+ CALL_D_L       1.000
+ W1_INET        0.000         1.000
+
+
+     BETWEEN LEVEL
+
+
+           Means
+              FEMALE        AGE           EDU_MED       EDU_HIGH      NR_DEV
+              ________      ________      ________      ________      ________
+                0.486        45.469         0.435         0.414         2.402
+
+
+           Means
+              CALL_D_L      W1_INET
+              ________      ________
+               -0.476         3.821
+
+
+           Covariances
+              FEMALE        AGE           EDU_MED       EDU_HIGH      NR_DEV
+              ________      ________      ________      ________      ________
+ FEMALE         0.255
+ AGE           -0.337       182.234
+ EDU_MED       -0.006         1.179         0.250
+ EDU_HIGH      -0.005        -1.643        -0.183         0.247
+ NR_DEV        -0.036         0.534        -0.016         0.035         0.379
+ CALL_D_L       0.000         0.000         0.000         0.000         0.000
+ W1_INET        0.000         0.000         0.000         0.000         0.000
+
+
+           Covariances
+              CALL_D_L      W1_INET
+              ________      ________
+ CALL_D_L       1.279
+ W1_INET        0.000        10.913
+
+
+           Correlations
+              FEMALE        AGE           EDU_MED       EDU_HIGH      NR_DEV
+              ________      ________      ________      ________      ________
+ FEMALE         1.000
+ AGE           -0.049         1.000
+ EDU_MED       -0.023         0.175         1.000
+ EDU_HIGH      -0.018        -0.245        -0.738         1.000
+ NR_DEV        -0.117         0.064        -0.052         0.115         1.000
+ CALL_D_L       0.000         0.000         0.000         0.000         0.000
+ W1_INET        0.000         0.000         0.000         0.000         0.000
+
+
+           Correlations
+              CALL_D_L      W1_INET
+              ________      ________
+ CALL_D_L       1.000
+ W1_INET        0.000         1.000
+
+
+TECHNICAL 1 OUTPUT
+
+
+     PARAMETER SPECIFICATION FOR WITHIN
+
+
+           NU
+              CALL_D_L      W1_INET
+              ________      ________
+                    0             0
+
+
+           LAMBDA
+              F             F&1           CALL_D_L
+              ________      ________      ________
+ CALL_D_L           0             0             0
+ W1_INET            0             0             0
+
+
+           THETA
+              CALL_D_L      W1_INET
+              ________      ________
+ CALL_D_L           0
+ W1_INET            0             1
+
+
+           ALPHA
+              F             F&1           CALL_D_L
+              ________      ________      ________
+                    0             0             0
+
+
+           BETA
+              F             F&1           CALL_D_L
+              ________      ________      ________
+ F                  0             0             0
+ F&1                0             0             0
+ CALL_D_L           0             0             0
+
+
+           PSI
+              F             F&1           CALL_D_L
+              ________      ________      ________
+ F                  2
+ F&1                0             0
+ CALL_D_L           0             0             0
+
+
+     PARAMETER SPECIFICATION FOR BETWEEN
+
+
+           NU
+              FEMALE        AGE           EDU_MED       EDU_HIGH      NR_DEV
+              ________      ________      ________      ________      ________
+                    0             0             0             0             0
+
+
+           NU
+              CALL_D_L      W1_INET
+              ________      ________
+                    0             3
+
+
+           LAMBDA
+              STAB          LOGV          FEMALE        AGE           EDU_MED
+              ________      ________      ________      ________      ________
+ FEMALE             0             0             0             0             0
+ AGE                0             0             0             0             0
+ EDU_MED            0             0             0             0             0
+ EDU_HIGH           0             0             0             0             0
+ NR_DEV             0             0             0             0             0
+ CALL_D_L           0             0             0             0             0
+ W1_INET            0             0             0             0             0
+
+
+           LAMBDA
+              EDU_HIGH      NR_DEV        CALL_D_L
+              ________      ________      ________
+ FEMALE             0             0             0
+ AGE                0             0             0
+ EDU_MED            0             0             0
+ EDU_HIGH           0             0             0
+ NR_DEV             0             0             0
+ CALL_D_L           0             0             0
+ W1_INET            0             0             0
+
+
+           THETA
+              FEMALE        AGE           EDU_MED       EDU_HIGH      NR_DEV
+              ________      ________      ________      ________      ________
+ FEMALE             0
+ AGE                0             0
+ EDU_MED            0             0             0
+ EDU_HIGH           0             0             0             0
+ NR_DEV             0             0             0             0             0
+ CALL_D_L           0             0             0             0             0
+ W1_INET            0             0             0             0             0
+
+
+           THETA
+              CALL_D_L      W1_INET
+              ________      ________
+ CALL_D_L           0
+ W1_INET            0             4
+
+
+           ALPHA
+              STAB          LOGV          FEMALE        AGE           EDU_MED
+              ________      ________      ________      ________      ________
+                    5             6             7             8             9
+
+
+           ALPHA
+              EDU_HIGH      NR_DEV        CALL_D_L
+              ________      ________      ________
+                   10            11            12
+
+
+           BETA
+              STAB          LOGV          FEMALE        AGE           EDU_MED
+              ________      ________      ________      ________      ________
+ STAB               0             0             0             0             0
+ LOGV               0             0            13            14            15
+ FEMALE             0             0             0             0             0
+ AGE                0             0             0             0             0
+ EDU_MED            0             0             0             0             0
+ EDU_HIGH           0             0             0             0             0
+ NR_DEV             0             0             0             0             0
+ CALL_D_L           0             0             0             0             0
+
+
+           BETA
+              EDU_HIGH      NR_DEV        CALL_D_L
+              ________      ________      ________
+ STAB               0             0             0
+ LOGV              16            17             0
+ FEMALE             0             0             0
+ AGE                0             0             0
+ EDU_MED            0             0             0
+ EDU_HIGH           0             0             0
+ NR_DEV             0             0             0
+ CALL_D_L           0             0             0
+
+
+           PSI
+              STAB          LOGV          FEMALE        AGE           EDU_MED
+              ________      ________      ________      ________      ________
+ STAB              18
+ LOGV               0            19
+ FEMALE             0             0            20
+ AGE                0             0            21            22
+ EDU_MED            0             0            23            24            25
+ EDU_HIGH           0             0            26            27            28
+ NR_DEV             0             0            30            31            32
+ CALL_D_L          35             0             0             0             0
+
+
+           PSI
+              EDU_HIGH      NR_DEV        CALL_D_L
+              ________      ________      ________
+ EDU_HIGH          29
+ NR_DEV            33            34
+ CALL_D_L           0             0            36
+
+
+     PARAMETER SPECIFICATION FOR THE ADDITIONAL PARAMETERS
+
+
+           NEW/ADDITIONAL PARAMETERS
+              MEDV          MEANV         25QV          75QV
+              ________      ________      ________      ________
+                   37            38            39            40
+
+
+     STARTING VALUES FOR WITHIN
+
+
+           NU
+              CALL_D_L      W1_INET
+              ________      ________
+                0.000         0.000
+
+
+           LAMBDA
+              F             F&1           CALL_D_L
+              ________      ________      ________
+ CALL_D_L       0.000         0.000         1.000
+ W1_INET        0.000         0.000         0.000
+
+
+           THETA
+              CALL_D_L      W1_INET
+              ________      ________
+ CALL_D_L       0.000
+ W1_INET        0.000         4.977
+
+
+           ALPHA
+              F             F&1           CALL_D_L
+              ________      ________      ________
+                0.000         0.000         0.000
+
+
+           BETA
+              F             F&1           CALL_D_L
+              ________      ________      ________
+ F              0.000         0.000         0.000
+ F&1            0.000         0.000         0.000
+ CALL_D_L       1.000         0.000         0.000
+
+
+           PSI
+              F             F&1           CALL_D_L
+              ________      ________      ________
+ F              1.000
+ F&1            0.000         1.000
+ CALL_D_L       0.000         0.000         0.000
+
+
+     STARTING VALUES FOR BETWEEN
+
+
+           NU
+              FEMALE        AGE           EDU_MED       EDU_HIGH      NR_DEV
+              ________      ________      ________      ________      ________
+                0.000         0.000         0.000         0.000         0.000
+
+
+           NU
+              CALL_D_L      W1_INET
+              ________      ________
+                0.000         3.726
+
+
+           LAMBDA
+              STAB          LOGV          FEMALE        AGE           EDU_MED
+              ________      ________      ________      ________      ________
+ FEMALE         0.000         0.000         1.000         0.000         0.000
+ AGE            0.000         0.000         0.000         1.000         0.000
+ EDU_MED        0.000         0.000         0.000         0.000         1.000
+ EDU_HIGH       0.000         0.000         0.000         0.000         0.000
+ NR_DEV         0.000         0.000         0.000         0.000         0.000
+ CALL_D_L       0.000         0.000         0.000         0.000         0.000
+ W1_INET        0.000         0.000         0.000         0.000         0.000
+
+
+           LAMBDA
+              EDU_HIGH      NR_DEV        CALL_D_L
+              ________      ________      ________
+ FEMALE         0.000         0.000         0.000
+ AGE            0.000         0.000         0.000
+ EDU_MED        0.000         0.000         0.000
+ EDU_HIGH       1.000         0.000         0.000
+ NR_DEV         0.000         1.000         0.000
+ CALL_D_L       0.000         0.000         1.000
+ W1_INET        0.000         0.000         0.000
+
+
+           THETA
+              FEMALE        AGE           EDU_MED       EDU_HIGH      NR_DEV
+              ________      ________      ________      ________      ________
+ FEMALE         0.000
+ AGE            0.000         0.000
+ EDU_MED        0.000         0.000         0.000
+ EDU_HIGH       0.000         0.000         0.000         0.000
+ NR_DEV         0.000         0.000         0.000         0.000         0.000
+ CALL_D_L       0.000         0.000         0.000         0.000         0.000
+ W1_INET        0.000         0.000         0.000         0.000         0.000
+
+
+           THETA
+              CALL_D_L      W1_INET
+              ________      ________
+ CALL_D_L       0.000
+ W1_INET        0.000         4.977
+
+
+           ALPHA
+              STAB          LOGV          FEMALE        AGE           EDU_MED
+              ________      ________      ________      ________      ________
+                0.000         0.000         0.483        45.457         0.442
+
+
+           ALPHA
+              EDU_HIGH      NR_DEV        CALL_D_L
+              ________      ________      ________
+                0.407         2.408        -0.197
+
+
+           BETA
+              STAB          LOGV          FEMALE        AGE           EDU_MED
+              ________      ________      ________      ________      ________
+ STAB           0.000         0.000         0.000         0.000         0.000
+ LOGV           0.000         0.000         0.000         0.000         0.000
+ FEMALE         0.000         0.000         0.000         0.000         0.000
+ AGE            0.000         0.000         0.000         0.000         0.000
+ EDU_MED        0.000         0.000         0.000         0.000         0.000
+ EDU_HIGH       0.000         0.000         0.000         0.000         0.000
+ NR_DEV         0.000         0.000         0.000         0.000         0.000
+ CALL_D_L       0.000         0.000         0.000         0.000         0.000
+
+
+           BETA
+              EDU_HIGH      NR_DEV        CALL_D_L
+              ________      ________      ________
+ STAB           0.000         0.000         0.000
+ LOGV           0.000         0.000         0.000
+ FEMALE         0.000         0.000         0.000
+ AGE            0.000         0.000         0.000
+ EDU_MED        0.000         0.000         0.000
+ EDU_HIGH       0.000         0.000         0.000
+ NR_DEV         0.000         0.000         0.000
+ CALL_D_L       0.000         0.000         0.000
+
+
+           PSI
+              STAB          LOGV          FEMALE        AGE           EDU_MED
+              ________      ________      ________      ________      ________
+ STAB           1.000
+ LOGV           0.000         1.000
+ FEMALE         0.000         0.000         0.125
+ AGE            0.000         0.000         0.000        89.098
+ EDU_MED        0.000         0.000         0.000         0.000         0.123
+ EDU_HIGH       0.000         0.000         0.000         0.000         0.000
+ NR_DEV         0.000         0.000         0.000         0.000         0.000
+ CALL_D_L       0.000         0.000         0.000         0.000         0.000
+
+
+           PSI
+              EDU_HIGH      NR_DEV        CALL_D_L
+              ________      ________      ________
+ EDU_HIGH       0.121
+ NR_DEV         0.000         0.184
+ CALL_D_L       0.000         0.000         1.645
+
+
+     STARTING VALUES FOR THE ADDITIONAL PARAMETERS
+
+
+           NEW/ADDITIONAL PARAMETERS
+              MEDV          MEANV         25QV          75QV
+              ________      ________      ________      ________
+                0.500         0.500         0.500         0.500
+
+
+
+     PRIORS FOR ALL PARAMETERS            PRIOR MEAN      PRIOR VARIANCE     PRIOR STD. DEV.
+
+     Parameter 1~IG(-1.000,0.000)          infinity            infinity            infinity
+     Parameter 2~IG(-1.000,0.000)          infinity            infinity            infinity
+     Parameter 3~N(0.000,infinity)           0.0000            infinity            infinity
+     Parameter 4~IG(-1.000,0.000)          infinity            infinity            infinity
+     Parameter 5~N(0.000,infinity)           0.0000            infinity            infinity
+     Parameter 6~N(0.000,infinity)           0.0000            infinity            infinity
+     Parameter 7~N(0.000,infinity)           0.0000            infinity            infinity
+     Parameter 8~N(0.000,infinity)           0.0000            infinity            infinity
+     Parameter 9~N(0.000,infinity)           0.0000            infinity            infinity
+     Parameter 10~N(0.000,infinity)          0.0000            infinity            infinity
+     Parameter 11~N(0.000,infinity)          0.0000            infinity            infinity
+     Parameter 12~N(0.000,infinity)          0.0000            infinity            infinity
+     Parameter 13~N(0.000,infinity)          0.0000            infinity            infinity
+     Parameter 14~N(0.000,infinity)          0.0000            infinity            infinity
+     Parameter 15~N(0.000,infinity)          0.0000            infinity            infinity
+     Parameter 16~N(0.000,infinity)          0.0000            infinity            infinity
+     Parameter 17~N(0.000,infinity)          0.0000            infinity            infinity
+     Parameter 18~IW(0.000,-3)             infinity            infinity            infinity
+     Parameter 19~IG(-1.000,0.000)         infinity            infinity            infinity
+     Parameter 20~IW(0.000,-6)             infinity            infinity            infinity
+     Parameter 21~IW(0.000,-6)             infinity            infinity            infinity
+     Parameter 22~IW(0.000,-6)             infinity            infinity            infinity
+     Parameter 23~IW(0.000,-6)             infinity            infinity            infinity
+     Parameter 24~IW(0.000,-6)             infinity            infinity            infinity
+     Parameter 25~IW(0.000,-6)             infinity            infinity            infinity
+     Parameter 26~IW(0.000,-6)             infinity            infinity            infinity
+     Parameter 27~IW(0.000,-6)             infinity            infinity            infinity
+     Parameter 28~IW(0.000,-6)             infinity            infinity            infinity
+     Parameter 29~IW(0.000,-6)             infinity            infinity            infinity
+     Parameter 30~IW(0.000,-6)             infinity            infinity            infinity
+     Parameter 31~IW(0.000,-6)             infinity            infinity            infinity
+     Parameter 32~IW(0.000,-6)             infinity            infinity            infinity
+     Parameter 33~IW(0.000,-6)             infinity            infinity            infinity
+     Parameter 34~IW(0.000,-6)             infinity            infinity            infinity
+     Parameter 35~IW(0.000,-3)             infinity            infinity            infinity
+     Parameter 36~IW(0.000,-3)             infinity            infinity            infinity
+
+
+TECHNICAL 4 OUTPUT
+
+
+     AVERAGE ESTIMATES DERIVED FROM THE MODEL FOR WITHIN
+
+
+           ESTIMATED MEANS FOR THE LATENT VARIABLES
+              F             F&1           STAB          LOGV          FEMALE
+              ________      ________      ________      ________      ________
+                0.000         0.000         0.303         0.336         0.486
+
+
+           ESTIMATED MEANS FOR THE LATENT VARIABLES
+              AGE           EDU_MED       EDU_HIGH      NR_DEV        CALL_D_L
+              ________      ________      ________      ________      ________
+               45.470         0.435         0.414         2.402        -0.476
+
+
+           ESTIMATED COVARIANCE MATRIX FOR THE LATENT VARIABLES
+              F             F&1           STAB          LOGV          FEMALE
+              ________      ________      ________      ________      ________
+ F              0.449
+ F&1            0.149         0.449
+ STAB           0.000         0.000         0.000
+ LOGV           0.000         0.000         0.000         0.000
+ FEMALE         0.000         0.000         0.000         0.000         0.000
+ AGE            0.000         0.000         0.000         0.000         0.000
+ EDU_MED        0.000         0.000         0.000         0.000         0.000
+ EDU_HIGH       0.000         0.000         0.000         0.000         0.000
+ NR_DEV         0.000         0.000         0.000         0.000         0.000
+ CALL_D_L       0.449         0.149         0.000         0.000         0.000
+
+
+           ESTIMATED COVARIANCE MATRIX FOR THE LATENT VARIABLES
+              AGE           EDU_MED       EDU_HIGH      NR_DEV        CALL_D_L
+              ________      ________      ________      ________      ________
+ AGE            0.000
+ EDU_MED        0.000         0.000
+ EDU_HIGH       0.000         0.000         0.000
+ NR_DEV         0.000         0.000         0.000         0.000
+ CALL_D_L       0.000         0.000         0.000         0.000         2.043
+
+
+           ESTIMATED CORRELATION MATRIX FOR THE LATENT VARIABLES
+              F             F&1           STAB          LOGV          FEMALE
+              ________      ________      ________      ________      ________
+ F              1.000
+ F&1            0.325         1.000
+ STAB           0.000         0.000         1.000
+ LOGV           0.000         0.000         0.000         1.000
+ FEMALE         0.000         0.000         0.000         0.000         1.000
+ AGE            0.000         0.000         0.000         0.000         0.000
+ EDU_MED        0.000         0.000         0.000         0.000         0.000
+ EDU_HIGH       0.000         0.000         0.000         0.000         0.000
+ NR_DEV         0.000         0.000         0.000         0.000         0.000
+ CALL_D_L       0.477         0.156         0.000         0.000         0.000
+
+
+           ESTIMATED CORRELATION MATRIX FOR THE LATENT VARIABLES
+              AGE           EDU_MED       EDU_HIGH      NR_DEV        CALL_D_L
+              ________      ________      ________      ________      ________
+ AGE            1.000
+ EDU_MED        0.000         1.000
+ EDU_HIGH       0.000         0.000         1.000
+ NR_DEV         0.000         0.000         0.000         1.000
+ CALL_D_L       0.000         0.000         0.000         0.000         1.000
+
+
+     ESTIMATES DERIVED FROM THE MODEL FOR BETWEEN
+
+
+           ESTIMATED MEANS FOR THE LATENT VARIABLES
+              F             F&1           STAB          LOGV          FEMALE
+              ________      ________      ________      ________      ________
+                0.000         0.000         0.298         0.348         0.486
+
+
+           ESTIMATED MEANS FOR THE LATENT VARIABLES
+              AGE           EDU_MED       EDU_HIGH      NR_DEV        CALL_D_L
+              ________      ________      ________      ________      ________
+               45.469         0.435         0.414         2.402        -0.476
+
+
+           ESTIMATED COVARIANCE MATRIX FOR THE LATENT VARIABLES
+              F             F&1           STAB          LOGV          FEMALE
+              ________      ________      ________      ________      ________
+ F              0.000
+ F&1            0.000         0.000
+ STAB           0.000         0.000         0.029
+ LOGV           0.000         0.000         0.000         0.251
+ FEMALE         0.000         0.000         0.000        -0.018         0.255
+ AGE            0.000         0.000         0.000         0.038        -0.337
+ EDU_MED        0.000         0.000         0.000         0.006        -0.006
+ EDU_HIGH       0.000         0.000         0.000         0.017        -0.005
+ NR_DEV         0.000         0.000         0.000         0.003        -0.036
+ CALL_D_L       0.000         0.000         0.061         0.000         0.000
+
+
+           ESTIMATED COVARIANCE MATRIX FOR THE LATENT VARIABLES
+              AGE           EDU_MED       EDU_HIGH      NR_DEV        CALL_D_L
+              ________      ________      ________      ________      ________
+ AGE          182.234
+ EDU_MED        1.179         0.250
+ EDU_HIGH      -1.643        -0.183         0.247
+ NR_DEV         0.534        -0.016         0.035         0.379
+ CALL_D_L       0.000         0.000         0.000         0.000         1.279
+
+
+           ESTIMATED CORRELATION MATRIX FOR THE LATENT VARIABLES
+              F             F&1           STAB          LOGV          FEMALE
+              ________      ________      ________      ________      ________
+ F              1.000
+ F&1            0.000         1.000
+ STAB           0.000         0.000         1.000
+ LOGV           0.000         0.000         0.000         1.000
+ FEMALE         0.000         0.000         0.000        -0.071         1.000
+ AGE            0.000         0.000         0.000         0.006        -0.049
+ EDU_MED        0.000         0.000         0.000         0.024        -0.023
+ EDU_HIGH       0.000         0.000         0.000         0.067        -0.018
+ NR_DEV         0.000         0.000         0.000         0.009        -0.117
+ CALL_D_L       0.000         0.000         0.315         0.000         0.000
+
+
+           ESTIMATED CORRELATION MATRIX FOR THE LATENT VARIABLES
+              AGE           EDU_MED       EDU_HIGH      NR_DEV        CALL_D_L
+              ________      ________      ________      ________      ________
+ AGE            1.000
+ EDU_MED        0.175         1.000
+ EDU_HIGH      -0.245        -0.738         1.000
+ NR_DEV         0.064        -0.052         0.115         1.000
+ CALL_D_L       0.000         0.000         0.000         0.000         1.000
+
+
+TECHNICAL 8 OUTPUT
+
+
+   TECHNICAL 8 OUTPUT FOR BAYES ESTIMATION
+
+     PROCESSOR    BSEED
+     1            0
+     2            285380
+     3            253358
+     4            93468
+     5            608496
+     6            903420
+     7            195873
+     8            462953
+     9            939021
+     10           127215
+     11           415931
+     12           533738
+     13           107446
+     14           399671
+     15           650371
+     16           27071
+     17           76974
+     18           68985
+     19           851945
+     20           637345
+     21           573096
+     22           902278
+     23           887676
+     24           372176
+     25           347515
+     26           207896
+     27           569131
+     28           364676
+     29           392418
+     30           366706
+
+                     POTENTIAL       PARAMETER WITH
+     ITERATION    SCALE REDUCTION      HIGHEST PSR
+     100              2.933               19
+     200              1.873               2
+     300              1.278               2
+     400              1.138               18
+     500              1.449               18
+     600              1.586               18
+     700              1.694               18
+     800              1.977               18
+     900              1.768               18
+     1000             1.762               18
+     1100             1.547               2
+     1200             1.394               2
+     1300             1.187               18
+     1400             1.137               19
+     1500             1.139               2
+     1600             1.138               2
+     1700             1.120               2
+     1800             1.094               2
+     1900             1.120               2
+     2000             1.089               2
+     2100             1.080               2
+     2200             1.050               5
+     2300             1.036               18
+     2400             1.036               18
+     2500             1.022               18
+     2600             1.038               18
+     2700             1.050               18
+     2800             1.064               2
+     2900             1.085               2
+     3000             1.100               2
+     3100             1.094               2
+     3200             1.088               2
+     3300             1.105               2
+     3400             1.117               2
+     3500             1.092               2
+     3600             1.089               2
+     3700             1.114               2
+     3800             1.144               2
+     3900             1.183               2
+     4000             1.192               2
+     4100             1.213               2
+     4200             1.282               2
+     4300             1.287               2
+     4400             1.196               2
+     4500             1.155               2
+     4600             1.110               2
+     4700             1.088               2
+     4800             1.087               2
+     4900             1.084               2
+     5000             1.086               2
+     5100             1.082               2
+     5200             1.053               2
+     5300             1.032               2
+     5400             1.016               2
+     5500             1.015               18
+     5600             1.015               18
+     5700             1.012               4
+     5800             1.012               4
+     5900             1.012               4
+     6000             1.014               4
+     6100             1.015               4
+     6200             1.015               4
+     6300             1.015               4
+     6400             1.014               4
+     6500             1.015               4
+     6600             1.016               4
+     6700             1.015               4
+     6800             1.015               4
+     6900             1.015               4
+     7000             1.015               4
+     7100             1.015               4
+     7200             1.017               4
+     7300             1.018               4
+     7400             1.019               4
+     7500             1.019               4
+     7600             1.019               4
+     7700             1.019               4
+     7800             1.020               4
+     7900             1.021               4
+     8000             1.021               4
+     8100             1.022               4
+     8200             1.023               4
+     8300             1.022               4
+     8400             1.022               4
+     8500             1.022               4
+     8600             1.023               4
+     8700             1.023               4
+     8800             1.024               4
+     8900             1.024               4
+     9000             1.024               4
+     9100             1.024               4
+     9200             1.024               4
+     9300             1.024               4
+     9400             1.024               4
+     9500             1.024               4
+     9600             1.023               4
+     9700             1.023               4
+     9800             1.022               4
+     9900             1.021               4
+     10000            1.021               4
+     10100            1.021               4
+     10200            1.020               4
+     10300            1.020               4
+     10400            1.020               4
+     10500            1.021               4
+     10600            1.021               4
+     10700            1.021               4
+     10800            1.020               4
+     10900            1.019               4
+     11000            1.018               4
+     11100            1.018               4
+     11200            1.017               4
+     11300            1.016               4
+     11400            1.017               4
+     11500            1.016               4
+     11600            1.015               4
+     11700            1.015               4
+     11800            1.014               4
+     11900            1.014               4
+     12000            1.013               4
+     12100            1.012               4
+     12200            1.011               4
+     12300            1.011               4
+     12400            1.012               4
+     12500            1.011               4
+     12600            1.011               4
+     12700            1.011               4
+     12800            1.010               4
+     12900            1.010               4
+     13000            1.010               4
+     13100            1.009               4
+     13200            1.008               4
+     13300            1.008               4
+     13400            1.008               4
+     13500            1.008               4
+     13600            1.010               2
+     13700            1.011               2
+     13800            1.011               2
+     13900            1.009               2
+     14000            1.010               2
+     14100            1.012               2
+     14200            1.013               2
+     14300            1.014               2
+     14400            1.017               2
+     14500            1.021               2
+     14600            1.026               2
+     14700            1.030               2
+     14800            1.037               2
+     14900            1.040               2
+     15000            1.043               2
+     15100            1.044               2
+     15200            1.054               2
+     15300            1.057               2
+     15400            1.061               2
+     15500            1.064               2
+     15600            1.065               2
+     15700            1.065               2
+     15800            1.065               2
+     15900            1.063               2
+     16000            1.060               2
+     16100            1.057               2
+     16200            1.058               2
+     16300            1.057               2
+     16400            1.056               2
+     16500            1.060               2
+     16600            1.058               2
+     16700            1.054               2
+     16800            1.051               2
+     16900            1.050               2
+     17000            1.051               2
+     17100            1.049               2
+     17200            1.046               2
+     17300            1.045               2
+     17400            1.043               2
+     17500            1.039               2
+     17600            1.038               3
+     17700            1.039               3
+     17800            1.040               3
+     17900            1.041               3
+     18000            1.042               3
+     18100            1.043               3
+     18200            1.044               3
+     18300            1.045               3
+     18400            1.047               3
+     18500            1.048               3
+     18600            1.051               3
+     18700            1.053               3
+     18800            1.054               3
+     18900            1.056               3
+     19000            1.058               3
+     19100            1.059               3
+     19200            1.060               3
+     19300            1.062               3
+     19400            1.063               3
+     19500            1.064               3
+     19600            1.066               3
+     19700            1.066               3
+     19800            1.067               3
+     19900            1.068               3
+     20000            1.070               3
+     20100            1.071               3
+     20200            1.071               3
+     20300            1.072               3
+     20400            1.073               3
+     20500            1.074               3
+     20600            1.074               3
+     20700            1.075               3
+     20800            1.076               3
+     20900            1.077               3
+     21000            1.078               3
+     21100            1.078               3
+     21200            1.079               3
+     21300            1.079               3
+     21400            1.079               3
+     21500            1.079               3
+     21600            1.079               3
+     21700            1.078               3
+     21800            1.078               3
+     21900            1.077               3
+     22000            1.077               3
+     22100            1.076               3
+     22200            1.076               3
+     22300            1.075               3
+     22400            1.075               3
+     22500            1.076               3
+     22600            1.075               3
+     22700            1.075               3
+     22800            1.075               3
+     22900            1.074               3
+     23000            1.073               3
+     23100            1.073               3
+     23200            1.072               3
+     23300            1.072               3
+     23400            1.072               3
+     23500            1.071               3
+     23600            1.071               3
+     23700            1.070               3
+     23800            1.069               3
+     23900            1.068               3
+     24000            1.068               3
+     24100            1.067               3
+     24200            1.066               3
+     24300            1.065               3
+     24400            1.065               3
+     24500            1.064               3
+     24600            1.064               3
+     24700            1.063               3
+     24800            1.062               3
+     24900            1.061               3
+     25000            1.060               3
+     25100            1.059               3
+     25200            1.059               3
+     25300            1.058               3
+     25400            1.057               3
+     25500            1.057               3
+     25600            1.056               3
+     25700            1.055               3
+     25800            1.054               3
+     25900            1.054               3
+     26000            1.053               3
+     26100            1.053               3
+     26200            1.052               3
+     26300            1.051               3
+     26400            1.050               3
+     26500            1.050               3
+     26600            1.050               3
+     26700            1.049               3
+     26800            1.049               3
+     26900            1.049               3
+     27000            1.048               3
+     27100            1.048               3
+     27200            1.047               3
+     27300            1.047               3
+     27400            1.047               3
+     27500            1.047               3
+     27600            1.047               3
+     27700            1.046               3
+     27800            1.046               3
+     27900            1.045               3
+     28000            1.045               3
+     28100            1.045               3
+     28200            1.044               3
+     28300            1.044               3
+     28400            1.044               3
+     28500            1.043               3
+     28600            1.043               3
+     28700            1.042               3
+     28800            1.042               3
+     28900            1.042               3
+     29000            1.042               3
+     29100            1.041               3
+     29200            1.041               3
+     29300            1.041               3
+     29400            1.040               3
+     29500            1.040               3
+     29600            1.040               3
+     29700            1.039               3
+     29800            1.039               3
+     29900            1.039               3
+     30000            1.039               3
+     30100            1.039               3
+     30200            1.038               3
+     30300            1.038               3
+     30400            1.037               3
+     30500            1.037               3
+     30600            1.037               3
+     30700            1.036               3
+     30800            1.036               3
+     30900            1.036               3
+     31000            1.035               3
+     31100            1.035               3
+     31200            1.034               3
+     31300            1.033               3
+     31400            1.033               3
+     31500            1.032               3
+     31600            1.031               3
+     31700            1.030               3
+     31800            1.030               3
+     31900            1.029               3
+     32000            1.029               3
+     32100            1.028               3
+     32200            1.027               3
+     32300            1.027               3
+     32400            1.026               3
+     32500            1.026               3
+     32600            1.025               3
+     32700            1.025               3
+     32800            1.025               3
+     32900            1.024               3
+     33000            1.024               3
+     33100            1.023               3
+     33200            1.023               3
+     33300            1.022               3
+     33400            1.022               3
+     33500            1.022               3
+     33600            1.021               3
+     33700            1.021               3
+     33800            1.021               3
+     33900            1.020               3
+     34000            1.020               3
+     34100            1.019               3
+     34200            1.019               3
+     34300            1.018               3
+     34400            1.018               3
+     34500            1.018               3
+     34600            1.017               3
+     34700            1.017               3
+     34800            1.017               3
+     34900            1.016               3
+     35000            1.016               3
+     35100            1.016               3
+     35200            1.015               3
+     35300            1.015               3
+     35400            1.014               3
+     35500            1.014               3
+     35600            1.014               3
+     35700            1.013               3
+     35800            1.013               3
+     35900            1.013               3
+     36000            1.012               3
+     36100            1.012               3
+     36200            1.011               3
+     36300            1.011               3
+     36400            1.010               3
+     36500            1.010               3
+     36600            1.010               3
+     36700            1.009               3
+     36800            1.009               3
+     36900            1.009               3
+     37000            1.008               3
+     37100            1.008               3
+     37200            1.007               3
+     37300            1.007               3
+     37400            1.007               3
+     37500            1.007               2
+     37600            1.008               2
+     37700            1.008               2
+     37800            1.009               2
+     37900            1.009               2
+     38000            1.009               2
+     38100            1.009               2
+     38200            1.009               2
+     38300            1.009               2
+     38400            1.011               2
+     38500            1.012               2
+     38600            1.012               2
+     38700            1.013               2
+     38800            1.013               2
+     38900            1.013               2
+     39000            1.013               2
+     39100            1.013               2
+     39200            1.012               2
+     39300            1.011               2
+     39400            1.011               2
+     39500            1.011               2
+     39600            1.011               2
+     39700            1.012               2
+     39800            1.012               2
+     39900            1.012               2
+     40000            1.013               2
+     40100            1.014               2
+     40200            1.014               2
+     40300            1.014               2
+     40400            1.014               2
+     40500            1.013               2
+     40600            1.013               2
+     40700            1.013               2
+     40800            1.013               2
+     40900            1.013               2
+     41000            1.013               2
+     41100            1.012               2
+     41200            1.011               2
+     41300            1.011               2
+     41400            1.010               2
+     41500            1.010               2
+     41600            1.009               2
+     41700            1.008               2
+     41800            1.007               2
+     41900            1.006               2
+     42000            1.006               2
+     42100            1.005               2
+     42200            1.004               2
+     42300            1.004               2
+     42400            1.004               3
+     42500            1.004               3
+     42600            1.004               3
+     42700            1.004               3
+     42800            1.005               3
+     42900            1.005               3
+     43000            1.005               3
+     43100            1.005               3
+     43200            1.005               3
+     43300            1.006               3
+     43400            1.006               3
+     43500            1.006               3
+     43600            1.006               3
+     43700            1.007               3
+     43800            1.007               3
+     43900            1.007               3
+     44000            1.007               3
+     44100            1.008               3
+     44200            1.008               3
+     44300            1.008               3
+     44400            1.008               3
+     44500            1.009               3
+     44600            1.009               3
+     44700            1.009               3
+     44800            1.009               3
+     44900            1.010               3
+     45000            1.010               3
+     45100            1.010               3
+     45200            1.010               3
+     45300            1.011               3
+     45400            1.011               3
+     45500            1.011               3
+     45600            1.011               3
+     45700            1.012               3
+     45800            1.012               3
+     45900            1.012               3
+     46000            1.012               3
+     46100            1.012               3
+     46200            1.012               3
+     46300            1.013               3
+     46400            1.013               3
+     46500            1.013               3
+     46600            1.013               3
+     46700            1.013               3
+     46800            1.013               3
+     46900            1.013               3
+     47000            1.013               3
+     47100            1.014               3
+     47200            1.014               3
+     47300            1.014               3
+     47400            1.014               3
+     47500            1.014               3
+     47600            1.014               3
+     47700            1.015               3
+     47800            1.015               3
+     47900            1.015               3
+     48000            1.015               3
+     48100            1.015               3
+     48200            1.015               3
+     48300            1.015               3
+     48400            1.015               3
+     48500            1.015               3
+     48600            1.015               3
+     48700            1.015               3
+     48800            1.015               3
+     48900            1.015               3
+     49000            1.015               3
+     49100            1.015               3
+     49200            1.015               3
+     49300            1.015               3
+     49400            1.015               3
+     49500            1.015               3
+     49600            1.015               3
+     49700            1.015               3
+     49800            1.015               3
+     49900            1.015               3
+     50000            1.015               3
+     50100            1.015               3
+     50200            1.015               3
+     50300            1.015               3
+     50400            1.015               3
+     50500            1.015               3
+     50600            1.016               3
+     50700            1.016               3
+     50800            1.016               3
+     50900            1.016               3
+     51000            1.016               3
+     51100            1.016               3
+     51200            1.016               3
+     51300            1.016               3
+     51400            1.016               3
+     51500            1.017               3
+     51600            1.017               3
+     51700            1.017               3
+     51800            1.017               3
+     51900            1.017               3
+     52000            1.017               3
+     52100            1.017               3
+     52200            1.017               3
+     52300            1.017               3
+     52400            1.017               3
+     52500            1.018               3
+     52600            1.018               3
+     52700            1.018               3
+     52800            1.018               3
+     52900            1.018               3
+     53000            1.018               3
+     53100            1.018               3
+     53200            1.019               3
+     53300            1.019               3
+     53400            1.019               3
+     53500            1.019               3
+     53600            1.019               3
+     53700            1.020               3
+     53800            1.020               3
+     53900            1.020               3
+     54000            1.020               3
+     54100            1.020               3
+     54200            1.021               3
+     54300            1.021               3
+     54400            1.021               3
+     54500            1.021               3
+     54600            1.022               3
+     54700            1.022               3
+     54800            1.022               3
+     54900            1.022               3
+     55000            1.022               3
+     55100            1.022               3
+     55200            1.023               3
+     55300            1.023               3
+     55400            1.023               3
+     55500            1.023               3
+     55600            1.023               3
+     55700            1.023               3
+     55800            1.024               3
+     55900            1.024               3
+     56000            1.024               3
+     56100            1.024               3
+     56200            1.024               3
+     56300            1.024               3
+     56400            1.024               3
+     56500            1.024               3
+     56600            1.025               3
+     56700            1.025               3
+     56800            1.025               3
+     56900            1.025               3
+     57000            1.025               3
+     57100            1.025               3
+     57200            1.025               3
+     57300            1.026               3
+     57400            1.026               3
+     57500            1.026               3
+     57600            1.026               3
+     57700            1.026               3
+     57800            1.026               3
+     57900            1.026               3
+     58000            1.026               3
+     58100            1.027               3
+     58200            1.027               3
+     58300            1.027               3
+     58400            1.027               3
+     58500            1.027               3
+     58600            1.027               3
+     58700            1.027               3
+     58800            1.026               3
+     58900            1.026               3
+     59000            1.026               3
+     59100            1.026               3
+     59200            1.027               3
+     59300            1.027               3
+     59400            1.027               3
+     59500            1.027               3
+     59600            1.027               3
+     59700            1.027               3
+     59800            1.027               3
+     59900            1.027               3
+     60000            1.027               3
+     60100            1.028               3
+     60200            1.028               3
+     60300            1.028               3
+     60400            1.028               3
+     60500            1.028               3
+     60600            1.028               3
+     60700            1.028               3
+     60800            1.028               3
+     60900            1.029               3
+     61000            1.029               3
+     61100            1.029               3
+     61200            1.029               3
+     61300            1.029               3
+     61400            1.029               3
+     61500            1.029               3
+     61600            1.030               3
+     61700            1.030               3
+     61800            1.030               3
+     61900            1.030               3
+     62000            1.030               3
+     62100            1.030               3
+     62200            1.030               3
+     62300            1.030               3
+     62400            1.030               3
+     62500            1.030               3
+     62600            1.030               3
+     62700            1.030               3
+     62800            1.030               3
+     62900            1.029               3
+     63000            1.029               3
+     63100            1.029               3
+     63200            1.029               3
+     63300            1.029               3
+     63400            1.028               3
+     63500            1.028               3
+     63600            1.027               3
+     63700            1.027               3
+     63800            1.027               3
+     63900            1.027               3
+     64000            1.026               3
+     64100            1.026               3
+     64200            1.026               3
+     64300            1.025               3
+     64400            1.025               3
+     64500            1.025               3
+     64600            1.025               3
+     64700            1.024               3
+     64800            1.024               3
+     64900            1.024               3
+     65000            1.024               3
+     65100            1.024               3
+     65200            1.024               3
+     65300            1.024               3
+     65400            1.024               3
+     65500            1.023               3
+     65600            1.023               3
+     65700            1.023               3
+     65800            1.023               3
+     65900            1.022               3
+     66000            1.022               3
+     66100            1.022               3
+     66200            1.022               3
+     66300            1.022               3
+     66400            1.022               3
+     66500            1.021               3
+     66600            1.021               3
+     66700            1.021               3
+     66800            1.021               3
+     66900            1.020               3
+     67000            1.020               3
+     67100            1.020               3
+     67200            1.020               3
+     67300            1.020               3
+     67400            1.020               3
+     67500            1.020               3
+     67600            1.020               3
+     67700            1.019               3
+     67800            1.019               3
+     67900            1.019               3
+     68000            1.019               3
+     68100            1.019               3
+     68200            1.019               3
+     68300            1.019               3
+     68400            1.018               3
+     68500            1.018               3
+     68600            1.018               3
+     68700            1.018               3
+     68800            1.018               3
+     68900            1.018               3
+     69000            1.018               3
+     69100            1.018               3
+     69200            1.018               3
+     69300            1.017               3
+     69400            1.017               3
+     69500            1.017               3
+     69600            1.017               3
+     69700            1.017               3
+     69800            1.017               3
+     69900            1.017               3
+     70000            1.017               3
+     70100            1.016               3
+     70200            1.016               3
+     70300            1.016               3
+     70400            1.016               3
+     70500            1.016               3
+     70600            1.016               3
+     70700            1.015               3
+     70800            1.015               3
+     70900            1.015               3
+     71000            1.015               3
+     71100            1.015               3
+     71200            1.015               3
+     71300            1.015               3
+     71400            1.014               3
+     71500            1.014               3
+     71600            1.014               3
+     71700            1.014               3
+     71800            1.014               3
+     71900            1.013               3
+     72000            1.013               3
+     72100            1.013               3
+     72200            1.013               3
+     72300            1.013               3
+     72400            1.012               3
+     72500            1.012               3
+     72600            1.012               3
+     72700            1.012               3
+     72800            1.012               3
+     72900            1.011               3
+     73000            1.011               3
+     73100            1.011               3
+     73200            1.011               3
+     73300            1.011               3
+     73400            1.010               3
+     73500            1.010               3
+     73600            1.010               3
+     73700            1.010               3
+     73800            1.010               3
+     73900            1.009               3
+     74000            1.009               3
+     74100            1.009               3
+     74200            1.009               3
+     74300            1.009               3
+     74400            1.009               3
+     74500            1.008               3
+     74600            1.008               3
+     74700            1.008               3
+     74800            1.008               3
+     74900            1.008               3
+     75000            1.007               3
+     75100            1.007               3
+     75200            1.007               3
+     75300            1.007               3
+     75400            1.007               3
+     75500            1.006               3
+     75600            1.006               3
+     75700            1.006               3
+     75800            1.006               3
+     75900            1.006               3
+     76000            1.006               3
+     76100            1.005               3
+     76200            1.005               3
+     76300            1.005               3
+     76400            1.005               3
+     76500            1.005               3
+     76600            1.005               3
+     76700            1.004               3
+     76800            1.004               3
+     76900            1.004               3
+     77000            1.004               3
+     77100            1.004               3
+     77200            1.004               3
+     77300            1.004               3
+     77400            1.003               3
+     77500            1.003               3
+     77600            1.003               3
+     77700            1.003               3
+     77800            1.003               3
+     77900            1.003               3
+     78000            1.003               3
+     78100            1.002               3
+     78200            1.002               3
+     78300            1.002               4
+     78400            1.002               4
+     78500            1.002               4
+     78600            1.003               4
+     78700            1.003               4
+     78800            1.003               4
+     78900            1.003               4
+     79000            1.003               4
+     79100            1.003               4
+     79200            1.003               4
+     79300            1.003               4
+     79400            1.003               4
+     79500            1.003               4
+     79600            1.003               4
+     79700            1.003               4
+     79800            1.003               4
+     79900            1.003               4
+     80000            1.003               4
+     80100            1.003               4
+     80200            1.003               4
+     80300            1.003               4
+     80400            1.003               4
+     80500            1.003               4
+     80600            1.003               4
+     80700            1.003               4
+     80800            1.003               4
+     80900            1.003               4
+     81000            1.004               4
+     81100            1.004               4
+     81200            1.004               4
+     81300            1.004               4
+     81400            1.004               4
+     81500            1.004               4
+     81600            1.004               4
+     81700            1.004               4
+     81800            1.004               4
+     81900            1.004               4
+     82000            1.004               4
+     82100            1.004               4
+     82200            1.004               4
+     82300            1.004               4
+     82400            1.004               4
+     82500            1.004               4
+     82600            1.004               4
+     82700            1.004               4
+     82800            1.004               4
+     82900            1.004               4
+     83000            1.004               4
+     83100            1.004               4
+     83200            1.004               4
+     83300            1.004               4
+     83400            1.004               4
+     83500            1.004               4
+     83600            1.004               4
+     83700            1.004               4
+     83800            1.004               4
+     83900            1.004               4
+     84000            1.004               4
+     84100            1.004               4
+     84200            1.004               4
+     84300            1.004               4
+     84400            1.004               4
+     84500            1.004               4
+     84600            1.004               4
+     84700            1.004               4
+     84800            1.004               4
+     84900            1.004               4
+     85000            1.004               4
+     85100            1.003               4
+     85200            1.003               4
+     85300            1.003               4
+     85400            1.003               4
+     85500            1.003               4
+     85600            1.003               4
+     85700            1.003               4
+     85800            1.003               4
+     85900            1.003               4
+     86000            1.003               4
+     86100            1.003               4
+     86200            1.003               4
+     86300            1.003               4
+     86400            1.003               4
+     86500            1.004               3
+     86600            1.004               3
+     86700            1.004               3
+     86800            1.004               3
+     86900            1.004               3
+     87000            1.004               3
+     87100            1.004               3
+     87200            1.004               3
+     87300            1.005               3
+     87400            1.005               3
+     87500            1.005               3
+     87600            1.005               3
+     87700            1.005               3
+     87800            1.006               3
+     87900            1.006               3
+     88000            1.006               3
+     88100            1.006               3
+     88200            1.006               3
+     88300            1.007               3
+     88400            1.007               3
+     88500            1.007               3
+     88600            1.007               3
+     88700            1.008               3
+     88800            1.008               3
+     88900            1.008               3
+     89000            1.008               3
+     89100            1.008               3
+     89200            1.009               3
+     89300            1.009               3
+     89400            1.009               3
+     89500            1.009               3
+     89600            1.010               3
+     89700            1.010               3
+     89800            1.010               3
+     89900            1.011               3
+     90000            1.011               3
+     90100            1.011               3
+     90200            1.011               3
+     90300            1.011               3
+     90400            1.011               3
+     90500            1.012               3
+     90600            1.012               3
+     90700            1.012               3
+     90800            1.013               3
+     90900            1.013               3
+     91000            1.013               3
+     91100            1.014               3
+     91200            1.014               3
+     91300            1.014               3
+     91400            1.014               3
+     91500            1.015               3
+     91600            1.015               3
+     91700            1.015               3
+     91800            1.016               3
+     91900            1.016               3
+     92000            1.016               3
+     92100            1.017               3
+     92200            1.017               3
+     92300            1.017               3
+     92400            1.017               3
+     92500            1.018               3
+     92600            1.018               3
+     92700            1.018               3
+     92800            1.019               3
+     92900            1.019               3
+     93000            1.019               3
+     93100            1.020               3
+     93200            1.020               3
+     93300            1.020               3
+     93400            1.021               3
+     93500            1.021               3
+     93600            1.021               3
+     93700            1.022               3
+     93800            1.022               3
+     93900            1.022               3
+     94000            1.023               3
+     94100            1.023               3
+     94200            1.023               3
+     94300            1.024               3
+     94400            1.024               3
+     94500            1.024               3
+     94600            1.025               3
+     94700            1.025               3
+     94800            1.025               3
+     94900            1.026               3
+     95000            1.026               3
+     95100            1.026               3
+     95200            1.026               3
+     95300            1.027               3
+     95400            1.027               3
+     95500            1.027               3
+     95600            1.028               3
+     95700            1.028               3
+     95800            1.028               3
+     95900            1.029               3
+     96000            1.029               3
+     96100            1.029               3
+     96200            1.030               3
+     96300            1.030               3
+     96400            1.030               3
+     96500            1.030               3
+     96600            1.031               3
+     96700            1.031               3
+     96800            1.031               3
+     96900            1.031               3
+     97000            1.031               3
+     97100            1.032               3
+     97200            1.032               3
+     97300            1.032               3
+     97400            1.032               3
+     97500            1.033               3
+     97600            1.033               3
+     97700            1.033               3
+     97800            1.033               3
+     97900            1.033               3
+     98000            1.033               3
+     98100            1.033               3
+     98200            1.033               3
+     98300            1.033               3
+     98400            1.033               3
+     98500            1.034               3
+     98600            1.034               3
+     98700            1.034               3
+     98800            1.034               3
+     98900            1.034               3
+     99000            1.034               3
+     99100            1.034               3
+     99200            1.034               3
+     99300            1.034               3
+     99400            1.034               3
+     99500            1.034               3
+     99600            1.035               3
+     99700            1.035               3
+     99800            1.035               3
+     99900            1.035               3
+     100000           1.035               3
+
+
+     MCMC EFFECTIVE SAMPLE SIZE (ESS) IN ASCENDING ORDER
+        LOWEST 10 PARAMETERS
+        PARAMETER    ESS
+             1       <20
+             3        86
+             2       480
+             4       505
+            19       807
+             5       888
+            39      1656
+             6      2100
+            18      2309
+            37      2354
+
+
+PLOT INFORMATION
+
+The following plots are available:
+
+  Histograms (sample values)
+  Scatterplots (sample values)
+  Between-level histograms (sample values, sample means/variances)
+  Between-level scatterplots (sample values, sample means/variances)
+  Time series plots (sample values, ACF, PACF)
+  Histogram of subjects per time point
+  Time interval plots
+  Bayesian posterior parameter distributions
+  Bayesian posterior parameter trace plots
+  Bayesian autocorrelation plots
+
+     Beginning Time:  14:03:48
+        Ending Time:  17:35:49
+       Elapsed Time:  27:32:01
+
+
+
+MUTHEN & MUTHEN
+3463 Stoner Ave.
+Los Angeles, CA  90066
+
+Tel: (310) 391-9971
+Fax: (310) 391-8971
+Web: www.StatModel.com
+Support: Support@StatModel.com
+
+Copyright (c) 1998-2025 Muthen & Muthen
