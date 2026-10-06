@@ -583,3 +583,11 @@ map(vars, function(x){
                                                    "w1b_datetime"))
   
 })
+
+# export coded web behavior
+
+w1_30d2 %>% 
+  select(new_id, time, day_before_w1, call_c_b, msg_c_b, phot_c_b, web_c_b, sm_c_b,
+         call_d_l2, msg_d_l2, phot_d_l2, web_d_l2, sm_d_l2, call_c_l2, msg_c_l2,
+         phot_c_l2, web_c_l2, sm_c_l2) %>% 
+  write_rds("./data/coded_web_behavior_v1.rds")
