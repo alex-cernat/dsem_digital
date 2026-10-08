@@ -466,6 +466,7 @@ res_m1 %>%
 
 res_m1 %>% 
   filter(time == T) |> 
+  filter(method != "Dummy") %>%
   group_by(method) %>% 
   summarise(rel = mean(est))
 
