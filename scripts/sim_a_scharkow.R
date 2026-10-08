@@ -29,7 +29,7 @@ library(lavaan)
 set.seed(1234)
 
 # folder for results
-dir.create("./ai/out", showWarnings = FALSE)
+dir.create("./out", showWarnings = FALSE)
 
 
 # Import data -----------------
@@ -277,8 +277,8 @@ n_reps <- 50
 
 res_sim <- map_df(rep(rel_levels, each = n_reps), run_one)
 
-write_rds(res_sim, "./ai/out/sim_a_results.rds")
-write_rds(true_fb, "./ai/out/sim_a_true.rds")
+write_rds(res_sim, "./out/sim_a_results.rds")
+write_rds(true_fb, "./out/sim_a_true.rds")
 
 
 # Results -----------------
@@ -316,4 +316,4 @@ res_long %>%
   theme_bw() +
   theme(text = element_text(size = 14))
 
-ggsave("./ai/out/sim_a_scharkow.png", width = 9, height = 4)
+ggsave("./out/sim_a_scharkow.png", width = 9, height = 4)

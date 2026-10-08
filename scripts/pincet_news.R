@@ -28,7 +28,7 @@ library(tidyverse)
 library(lavaan)
 
 # folder for results
-dir.create("./ai/out", showWarnings = FALSE)
+dir.create("./out", showWarnings = FALSE)
 
 
 # Import data -----------------
@@ -208,7 +208,7 @@ res_all <- bind_rows(res_naive, res_sm, res_both)
 
 res_all
 
-write_csv(res_all, "./ai/out/pincet_news_results.csv")
+write_csv(res_all, "./out/pincet_news_results.csv")
 
 # graph: estimates and 95% confidence intervals
 res_all %>%
@@ -229,4 +229,4 @@ res_all %>%
   theme_bw() +
   theme(text = element_text(size = 14))
 
-ggsave("./ai/out/pincet_news.png", width = 10, height = 4)
+ggsave("./out/pincet_news.png", width = 10, height = 4)
